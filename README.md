@@ -133,4 +133,5 @@
 |--------|------|------|
 | 장학 UI + AI 구조도 | [index.html](https://leejongku.github.io/dankook-ai-academic-strategy/) | 장학 조회 화면 + 전체 AI 서비스 구조도 |
 | 8개 메뉴 상세 화면 | [screens.html](https://leejongku.github.io/dankook-ai-academic-strategy/screens.html) | 학적·수업·성적·학사일정·장학·등록·졸업·진로 웹+모바일 나란히 |
+| AI 컨설팅 대시보드 | [dashboard.html](https://leejongku.github.io/dankook-ai-academic-strategy/dashboard.html) | 74개 메뉴 접속 데이터 기반 AI 접목 가능성 분석 + 우선순위 필터·검색 |
 
