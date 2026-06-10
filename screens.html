@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학사정보시스템 AI 서비스 — 8개 메뉴 상세 화면</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;background:#0D1B2A;color:#E2E8F0;min-height:100vh;line-height:1.6}
+
+/* 변수 */
+:root{
+  --navy:#0D1B2A;--navy2:#152236;--navy3:#1E3A5F;
+  --blue:#2563EB;--sky:#378ADD;--teal:#0D9488;--green:#059669;
+  --amber:#D97706;--orange:#EA580C;--coral:#DC4A3D;--purple:#534AB7;
+  --white:#FFFFFF;--text:#E2E8F0;--sub:#94A3B8;--border:rgba(255,255,255,0.08);
+  --card:rgba(255,255,255,0.05);--card2:rgba(255,255,255,0.09);
+}
+
+/* 헤더 */
+header{background:rgba(13,27,42,0.96);border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{font-size:14px;font-weight:600;color:#fff}
+.logo span{color:var(--sky);font-weight:400;font-size:12px;margin-left:6px}
+
+/* 탭 바 */
+.tab-bar{display:flex;flex-wrap:wrap;gap:6px;padding:1.25rem 2rem 0;max-width:1280px;margin:0 auto}
+.tab-btn{display:flex;align-items:center;gap:5px;font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;transition:all .15s;font-family:inherit}
+.tab-btn:hover{background:var(--card2);color:var(--text);border-color:rgba(255,255,255,0.15)}
+.tab-btn.on{color:#fff;font-weight:600;border-color:transparent}
+
+/* 메인 */
+main{max-width:1280px;margin:0 auto;padding:1.5rem 2rem 4rem}
+.screen{display:none}
+.screen.active{display:block}
+.screen-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;letter-spacing:-0.02em}
+.screen-sub{font-size:13px;color:var(--sub);margin-bottom:20px}
+hr.dv{border:none;border-top:1px solid var(--border);margin-bottom:20px}
+
+/* 2단 레이아웃 */
+.dual{display:grid;grid-template-columns:1fr 256px;gap:18px;align-items:start}
+@media(max-width:768px){.dual{grid-template-columns:1fr}.mob-frame{width:100%}}
+
+/* 웹 프레임 */
+.web-frame{background:#1a2332;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.web-bar{background:#111d2b;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.web-dots{display:flex;gap:5px}
+.wd{width:9px;height:9px;border-radius:50%}
+.wd:nth-child(1){background:#FF5F57}.wd:nth-child(2){background:#FEBC2E}.wd:nth-child(3){background:#28C840}
+.web-url{flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:3px 12px;font-size:11px;color:var(--sub);font-family:'SF Mono',monospace}
+.web-body{padding:18px}
+.breadcrumb{font-size:11px;color:var(--sub);margin-bottom:8px}
+.page-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+
+/* 모바일 프레임 */
+.mob-frame{background:#1a2332;border:1px solid var(--border);border-radius:26px;overflow:hidden;width:256px}
+.mob-status{background:#111d2b;padding:8px 18px 6px;display:flex;justify-content:space-between;font-size:10px;color:var(--sub);border-bottom:1px solid var(--border)}
+.mob-topbar{background:#111d2b;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.mob-topbar-title{flex:1;text-align:center;font-size:13px;font-weight:600;color:#fff}
+.mob-body{padding:13px}
+
+/* 공통 컴포넌트 */
+.card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:11px}
+.card-sm{background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.row+.row{margin-top:6px}
+.lbl{font-size:11px;color:var(--sub)}
+.val{font-size:13px;font-weight:600;color:#fff}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.divl{border:none;border-top:1px solid var(--border);margin:10px 0}
+.sec-sep{font-size:10px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:15px}
+.stat-box{background:rgba(255,255,255,0.06);border-radius:10px;padding:11px 8px 9px;text-align:center;border:1px solid var(--border)}
+.stat-num{font-size:21px;font-weight:700}
+.stat-lbl{font-size:10px;color:var(--sub);margin-top:2px}
+.bar-wrap{background:rgba(255,255,255,0.1);border-radius:4px;height:5px;margin-top:5px}
+.bar-fill{height:5px;border-radius:4px}
+.noti{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border-radius:10px;margin-bottom:8px;border:1px solid var(--border)}
+.noti i{font-size:14px;margin-top:1px;flex-shrink:0}
+.noti-t{font-size:12px;font-weight:600;margin-bottom:2px}
+.noti-s{font-size:11px;color:var(--sub)}
+.ai-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:2px 7px;background:rgba(37,99,235,0.2);color:#7EB3F8;border-radius:20px;border:1px solid rgba(37,99,235,0.3)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px}
+.tbl th{font-size:11px;font-weight:600;color:var(--sub);padding:6px 8px;border-bottom:1px solid var(--border);text-align:left}
+.tbl td{padding:7px 8px;border-bottom:1px solid var(--border);color:#fff}
+.tbl tr:last-child td{border-bottom:none}
+.step-list{display:flex;flex-direction:column;gap:0}
+.step-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
+.step-item+.step-item{border-top:1px solid var(--border)}
+.step-circle{width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.gauge-wrap{text-align:center;margin:4px 0 10px}
+.grade-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.grade-label{font-size:12px;color:var(--sub);width:72px}
+.grade-bar-wrap{flex:1;height:7px;background:rgba(255,255,255,0.1);border-radius:4px}
+.grade-bar{height:7px;border-radius:4px}
+.grade-val{font-size:12px;font-weight:600;color:#fff;width:32px;text-align:right}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px}
+.day-cell{text-align:center;padding:5px 2px;border-radius:8px;font-size:11px}
+.day-cell.today{background:#185FA5;color:#fff;font-weight:600}
+.tl-item{display:flex;gap:10px;padding:8px 0}
+.tl-item+.tl-item{border-top:1px solid var(--border)}
+.tl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.tl-year{font-size:11px;font-weight:600;color:var(--sub);width:34px;flex-shrink:0;margin-top:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">단국대학교 학사정보시스템 <span>AI 서비스 — 메뉴별 상세 화면</span></div>
+</header>
+
+<!-- 탭 -->
+<div class="tab-bar" id="tabs">
+  <button class="tab-btn on" style="background:#185FA5;border-color:#185FA5" onclick="go(0,this)"><i class="ti ti-user-check"></i>학적</button>
+  <button class="tab-btn" onclick="go(1,this)"><i class="ti ti-book"></i>수업</button>
+  <button class="tab-btn" onclick="go(2,this)"><i class="ti ti-chart-bar"></i>성적</button>
+  <button class="tab-btn" onclick="go(3,this)"><i class="ti ti-calendar"></i>학사일정</button>
+  <button class="tab-btn" onclick="go(4,this)"><i class="ti ti-award"></i>장학</button>
+  <button class="tab-btn" onclick="go(5,this)"><i class="ti ti-credit-card"></i>등록</button>
+  <button class="tab-btn" onclick="go(6,this)"><i class="ti ti-school"></i>졸업</button>
+  <button class="tab-btn" onclick="go(7,this)"><i class="ti ti-map"></i>진로·고도화</button>
+</div>
+
+<main>
+
+<!-- ══ 0. 학적 ══ -->
+<div class="screen active" id="s0">
+  <div class="screen-title"><i class="ti ti-user-check"></i>학적 관리</div>
+  <p class="screen-sub">재학·휴학·복학·제적 학적 변동 AI 자동 안내 및 단계별 진행 추적 | AI 범주: NLP · 자동화 · 경보</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/hakjeok</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 학적 관리</div>
+        <div class="page-title"><i class="ti ti-user-check"></i>학적 관리</div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-num" style="color:#378ADD">재학</div><div class="stat-lbl">현재 상태</div></div>
+          <div class="stat-box"><div class="stat-num">4학년</div><div class="stat-lbl">학년</div></div>
+          <div class="stat-box"><div class="stat-num">2학기</div><div class="stat-lbl">학기</div></div>
+        </div>
+        <div class="sec-sep">학적 변동 신청 — 진행 현황</div>
+        <div class="step-list">
+          <div class="step-item"><div class="step-circle" style="background:#E1F5EE;color:#085041"><i class="ti ti-check" style="font-size:11px"></i></div><div><div class="val" style="font-size:13px">신청서 제출</div><div class="lbl">2025.03.02 완료</div></div></div>
+          <div class="step-item"><div class="step-circle" style="background:#185FA5;color:#fff">2</div><div><div class="val" style="font-size:13px">지도교수 확인</div><div class="lbl">처리 중 — 평균 1~2일 소요</div></div></div>
+          <div class="step-item"><div class="step-circle" style="background:rgba(255,255,255,0.08);color:var(--sub)">3</div><div><div class="val" style="font-size:13px;color:var(--sub)">학과 승인</div><div class="lbl">대기 중</div></div></div>
+          <div class="step-item"><div class="step-circle" style="background:rgba(255,255,255,0.08);color:var(--sub)">4</div><div><div class="val" style="font-size:13px;color:var(--sub)">처리 완료</div><div class="lbl">대기 중</div></div></div>
+        </div>
+        <div class="sec-sep">AI 안내 챗봇</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+          <div style="max-width:85%;padding:9px 12px;background:var(--card2);border-radius:12px 12px 12px 3px;font-size:12px;align-self:flex-start"><span class="ai-tag" style="display:inline-block;margin-bottom:5px"><i class="ti ti-sparkles" style="font-size:10px"></i> AI</span><br>안녕하세요! 학적 관련 궁금한 사항을 질문해 주세요.</div>
+          <div style="max-width:85%;padding:9px 12px;background:#185FA5;border-radius:12px 12px 3px 12px;font-size:12px;align-self:flex-end;color:#fff">휴학 신청 기간이 언제예요?</div>
+          <div style="max-width:85%;padding:9px 12px;background:var(--card2);border-radius:12px 12px 12px 3px;font-size:12px">2025학년도 1학기 휴학 신청 기간은 <strong>3월 2일 ~ 3월 20일</strong>입니다. 군 휴학은 입영 전 언제든 가능합니다.</div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">학적 관리</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="card-sm"><div class="row"><span class="lbl">학번</span><span class="val">32210001</span></div><div class="row"><span class="lbl">소속</span><span class="val">컴퓨터공학과</span></div><div class="row"><span class="lbl">상태</span><span class="badge" style="background:rgba(37,99,235,0.2);color:#7EB3F8">재학</span></div></div>
+        <div class="sec-sep">진행 중 신청</div>
+        <div class="noti" style="background:rgba(217,119,6,0.15);border-color:rgba(217,119,6,0.3)"><i class="ti ti-clock" style="color:#FCD34D"></i><div><div class="noti-t" style="color:#FCD34D">휴학 신청 처리 중</div><div class="noti-s">지도교수 확인 단계</div></div></div>
+        <div class="sec-sep">AI 빠른 질문</div>
+        <div style="padding:9px 11px;background:var(--card2);border-radius:10px;font-size:12px;color:var(--sub)">학적 관련 질문을 입력하세요...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 1. 수업 ══ -->
+<div class="screen" id="s1">
+  <div class="screen-title"><i class="ti ti-book"></i>수업 관리</div>
+  <p class="screen-sub">강의계획서 AI 요약 · 성적 비율 전략 계산 · 출석 위험 경보 | AI 범주: NLP · 예측 · 경보 · 자동화</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/suup</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 수업 관리</div>
+        <div class="page-title"><i class="ti ti-book"></i>수업 관리</div>
+        <div class="sec-sep">강의계획서 AI 요약</div>
+        <div class="card">
+          <div class="row" style="margin-bottom:8px"><div><div class="val" style="font-size:14px">데이터베이스 설계</div><div class="lbl" style="margin-top:2px">김교수 · 화목 10:00 · 3학점</div></div><span class="ai-tag"><i class="ti ti-sparkles" style="font-size:10px"></i> AI 요약</span></div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.7;padding:10px;background:rgba(255,255,255,0.04);border-radius:9px">관계형 DB 설계 원리부터 SQL 최적화까지 다룹니다. 중간 30% · 기말 40% · 과제 20% · 출석 10% 배점이며, 15주 중 6주에 걸쳐 실습 프로젝트를 진행합니다.</div>
+        </div>
+        <div class="sec-sep">성적 비율 전략 계산기</div>
+        <div class="card">
+          <div class="grade-row"><div class="grade-label">중간 (30%)</div><div class="grade-bar-wrap"><div class="grade-bar" style="width:73%;background:#378ADD"></div></div><div class="grade-val">73점</div></div>
+          <div class="grade-row"><div class="grade-label">과제 (20%)</div><div class="grade-bar-wrap"><div class="grade-bar" style="width:90%;background:#378ADD"></div></div><div class="grade-val">90점</div></div>
+          <div class="grade-row"><div class="grade-label">출석 (10%)</div><div class="grade-bar-wrap"><div class="grade-bar" style="width:100%;background:#378ADD"></div></div><div class="grade-val">100점</div></div>
+          <hr class="divl">
+          <div class="row"><div style="font-size:12px;color:var(--sub)">A학점(90점) 달성을 위한 기말 필요 점수</div><div style="font-size:22px;font-weight:700;color:#378ADD">96점</div></div>
+          <div style="font-size:11px;color:var(--sub);margin-top:4px">기말 40% 반영 — 현재 누적 61.9점 기준</div>
+        </div>
+        <div class="sec-sep">출석 현황</div>
+        <table class="tbl">
+          <thead><tr><th>과목</th><th>출석</th><th>결석</th><th>한도</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>데이터베이스 설계</td><td>12</td><td>1</td><td>4</td><td><span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">양호</span></td></tr>
+            <tr><td>운영체제</td><td>10</td><td>3</td><td>4</td><td><span class="badge" style="background:rgba(217,119,6,0.2);color:#FCD34D">주의</span></td></tr>
+            <tr><td>소프트웨어공학</td><td>13</td><td>0</td><td>4</td><td><span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">양호</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">수업</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="sec-sep">이번 주 수업</div>
+        <div class="card-sm"><div class="val" style="font-size:13px">데이터베이스 설계</div><div class="lbl" style="margin:3px 0">화 10:00 · 공학관 301</div><div class="bar-wrap"><div class="bar-fill" style="width:73%;background:#185FA5"></div></div><div class="lbl" style="margin-top:4px">출석 12/13 · 결석 1회</div></div>
+        <div class="sec-sep">AI 성적 전략</div>
+        <div class="noti" style="background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3)"><i class="ti ti-bulb" style="color:#7EB3F8"></i><div style="font-size:12px;color:#C7DCF8;line-height:1.5">A학점까지 기말에 <strong style="color:#fff">96점</strong> 필요<br><span style="font-size:11px;color:#7EB3F8">현재 누적 61.9점</span></div></div>
+        <div class="sec-sep">출석 경보</div>
+        <div class="noti" style="background:rgba(217,119,6,0.15);border-color:rgba(217,119,6,0.3)"><i class="ti ti-alert-triangle" style="color:#FCD34D"></i><div><div class="noti-t" style="color:#FCD34D">운영체제 결석 3회</div><div class="noti-s">한도 4회 — 1회 남음</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. 성적 ══ -->
+<div class="screen" id="s2">
+  <div class="screen-title"><i class="ti ti-chart-bar"></i>성적 조회</div>
+  <p class="screen-sub">학기별 GPA 추이 AI 분석 · 학점 예측 시뮬레이션 · 성적 급락 경보 | AI 범주: 예측 · 경보 · 의사결정</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/seongjuk</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 성적 조회</div>
+        <div class="page-title"><i class="ti ti-chart-bar"></i>성적 조회</div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-num" style="color:#378ADD">3.82</div><div class="stat-lbl">전체 GPA</div></div>
+          <div class="stat-box"><div class="stat-num">3.95</div><div class="stat-lbl">금학기 GPA</div></div>
+          <div class="stat-box"><div class="stat-num">108</div><div class="stat-lbl">이수 학점</div></div>
+        </div>
+        <div class="sec-sep">학기별 GPA 추이 (AI 분석)</div>
+        <div class="card">
+          <div style="display:flex;align-items:flex-end;gap:7px;height:80px;margin-bottom:8px">
+            ${[{v:3.2,l:'1-1'},{v:3.5,l:'1-2'},{v:3.6,l:'2-1'},{v:3.4,l:'2-2'},{v:3.7,l:'3-1'},{v:3.8,l:'3-2'},{v:3.95,l:'4-1'}].map(d=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><div style="font-size:9px;color:var(--sub)">${d.v.toFixed(1)}</div><div style="width:100%;background:${d.l==='4-1'?'#2563EB':'rgba(55,138,221,0.4)'};border-radius:3px 3px 0 0;height:${Math.round((d.v/4.5)*70)}px"></div><div style="font-size:9px;color:var(--sub)">${d.l}</div></div>`).join('')}
+          </div>
+          <div style="font-size:11px;color:var(--sub);padding:8px 10px;background:rgba(37,99,235,0.1);border-radius:9px;border:1px solid rgba(37,99,235,0.2)"><i class="ti ti-sparkles" style="font-size:12px;color:#7EB3F8;vertical-align:-2px"></i> AI 분석: 꾸준한 상승세입니다. 현재 페이스 유지 시 졸업 GPA <strong style="color:#fff">3.85</strong> 예상</div>
+        </div>
+        <div class="sec-sep">이번 학기 성적 상세</div>
+        <table class="tbl">
+          <thead><tr><th>과목명</th><th>학점</th><th>등급</th><th>GPA</th></tr></thead>
+          <tbody>
+            <tr><td>데이터베이스 설계</td><td>3</td><td><span class="badge" style="background:rgba(37,99,235,0.2);color:#7EB3F8">A+</span></td><td>4.5</td></tr>
+            <tr><td>운영체제</td><td>3</td><td><span class="badge" style="background:rgba(37,99,235,0.2);color:#7EB3F8">A0</span></td><td>4.0</td></tr>
+            <tr><td>소프트웨어공학</td><td>3</td><td><span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">B+</span></td><td>3.5</td></tr>
+            <tr><td>캡스톤디자인</td><td>3</td><td><span class="badge" style="background:rgba(37,99,235,0.2);color:#7EB3F8">A+</span></td><td>4.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">성적 조회</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 120 70" width="120" height="70">
+            <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="10" stroke-linecap="round"/>
+            <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="#2563EB" stroke-width="10" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="35"/>
+            <text x="60" y="56" text-anchor="middle" font-size="18" font-weight="700" fill="#E2E8F0">3.82</text>
+            <text x="60" y="68" text-anchor="middle" font-size="9" fill="#94A3B8">전체 GPA</text>
+          </svg>
+        </div>
+        <div class="card-sm"><div class="row"><span class="lbl">이번 학기</span><span class="val" style="color:#378ADD">3.95</span></div><div class="row"><span class="lbl">이수 학점</span><span class="val">108 / 130</span></div><div class="bar-wrap" style="margin-top:6px"><div class="bar-fill" style="width:83%;background:#0D9488"></div></div></div>
+        <div class="sec-sep">AI 분석</div>
+        <div class="noti" style="background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3)"><i class="ti ti-trending-up" style="color:#7EB3F8"></i><div style="font-size:11px;color:#C7DCF8;line-height:1.5">꾸준한 상승세<br>졸업 GPA <strong style="color:#fff">3.85 예상</strong></div></div>
+        <div class="sec-sep">최근 성적</div>
+        ${[['데이터베이스','A+'],['운영체제','A0'],['소프트웨어공학','B+']].map(([n,g])=>`<div class="row" style="padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px">${n}</span><span class="badge" style="background:rgba(37,99,235,0.2);color:#7EB3F8">${g}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. 학사일정 ══ -->
+<div class="screen" id="s3">
+  <div class="screen-title"><i class="ti ti-calendar"></i>학사일정</div>
+  <p class="screen-sub">학사일정 AI 체크 · 개인 학습 플래너 자동 생성 · 배점 기반 D-day 알림 | AI 범주: 자동화 · 경보 · 개인화</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/haksa</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 학사일정</div>
+        <div class="page-title"><i class="ti ti-calendar"></i>학사일정</div>
+        <div class="sec-sep">2025년 11월</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px;text-align:center">
+          ${['일','월','화','수','목','금','토'].map(d=>`<div style="font-size:11px;color:var(--sub);padding:3px 0">${d}</div>`).join('')}
+          ${Array.from({length:30},(_,i)=>{const n=i+1;const ev=[3,8,11,16,22].includes(n);return`<div style="padding:5px 3px;border-radius:7px;font-size:12px;text-align:center;background:${n===11?'#185FA5':'rgba(255,255,255,0.05)'};color:${n===11?'#fff':'#E2E8F0'}">${n}${ev?`<div style="width:4px;height:4px;border-radius:50%;background:${n===11?'rgba(255,255,255,0.7)':'#0D9488'};margin:2px auto 0"></div>`:''}</div>`;}).join('')}
+        </div>
+        <div class="sec-sep">AI 일정 체크 — 이번 주</div>
+        ${[{dot:'#DC4A3D',title:'운영체제 기말고사',sub:'11/13(목) 10:00 · 공학관 401 · 배점 40%',badge:'D-2',bg:'rgba(220,74,61,0.15)',bc:'rgba(220,74,61,0.3)',tc:'#FCA5A5'},{dot:'#2563EB',title:'데이터베이스 과제 제출',sub:'11/15(토) 23:59 · LMS 온라인 제출 · 배점 20%',badge:'D-4',bg:'rgba(37,99,235,0.15)',bc:'rgba(37,99,235,0.3)',tc:'#7EB3F8'},{dot:'#0D9488',title:'캡스톤 발표',sub:'11/20(목) 14:00 · 공학관 세미나실',badge:'D-9',bg:'rgba(13,148,136,0.15)',bc:'rgba(13,148,136,0.3)',tc:'#5EEAD4'}].map(e=>`<div class="noti" style="background:${e.bg};border-color:${e.bc}"><i class="ti ti-circle-filled" style="color:${e.dot};font-size:10px;margin-top:4px"></i><div style="flex:1"><div class="row"><span class="val" style="font-size:13px">${e.title}</span><span class="badge" style="background:${e.bg};color:${e.tc};border:1px solid ${e.bc}">${e.badge}</span></div><div class="lbl" style="margin-top:3px">${e.sub}</div></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">학사일정</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="week-grid">${['일','월','화','수','목','금','토'].map((d,i)=>`<div style="text-align:center"><div style="font-size:10px;color:var(--sub);margin-bottom:3px">${d}</div><div class="day-cell${i===2?' today':''}" style="position:relative">${[9,10,11,12,13,14,15][i]}${[3,5].includes(i)?`<div style="width:4px;height:4px;border-radius:50%;background:${i===3?'#DC4A3D':'#2563EB'};margin:2px auto 0"></div>`:''}</div></div>`).join('')}</div>
+        <div class="sec-sep">오늘 일정</div>
+        <div class="noti" style="background:rgba(220,74,61,0.15);border-color:rgba(220,74,61,0.3)"><i class="ti ti-alert-circle" style="color:#FCA5A5"></i><div><div class="noti-t" style="color:#FCA5A5">운영체제 기말 D-2</div><div class="noti-s">목 10:00 · 공학관 401</div></div></div>
+        <div class="sec-sep">다가오는 일정</div>
+        ${[['DB 과제 제출','D-4','rgba(37,99,235,0.2)','#7EB3F8'],['캡스톤 발표','D-9','rgba(13,148,136,0.2)','#5EEAD4']].map(([t,d,bg,fg])=>`<div class="row" style="padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px">${t}</span><span class="badge" style="background:${bg};color:${fg}">${d}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 4. 장학 ══ -->
+<div class="screen" id="s4">
+  <div class="screen-title"><i class="ti ti-award"></i>장학 조회</div>
+  <p class="screen-sub">성적·소득·전공 조건 AI 자동 매칭 · 마감 D-7·D-1 경보 · 서류 가이드 | AI 범주: 추천 · 개인화 · 경보</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/janghak</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 장학 조회</div>
+        <div class="page-title"><i class="ti ti-award"></i>장학 조회</div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-num" style="color:#378ADD">3</div><div class="stat-lbl">수혜 가능 장학</div></div>
+          <div class="stat-box"><div class="stat-num">450만</div><div class="stat-lbl">예상 수혜액</div></div>
+          <div class="stat-box"><div class="stat-num" style="color:#FCD34D">D-12</div><div class="stat-lbl">최근 마감</div></div>
+        </div>
+        <div class="sec-sep">AI 추천 장학금</div>
+        ${[{name:'성적 우수 장학 (1종)',cond:'GPA 3.8 이상 · 본인 충족',pct:'98%',amt:'200만원/학기',pc:'rgba(37,99,235,0.2)',ptc:'#7EB3F8',w:98,wc:'#2563EB'},{name:'국가근로장학금',cond:'소득 3구간 이하 · 서류 제출 필요',pct:'85%',amt:'최대 230만원',pc:'rgba(5,150,105,0.2)',ptc:'#6EE7B7',w:85,wc:'#059669'},{name:'공학인재 장학',cond:'공대 재학 · 지도교수 추천 필요',pct:'72%',amt:'100만원',pc:'rgba(217,119,6,0.2)',ptc:'#FCD34D',w:72,wc:'#D97706'}].map(s=>`<div class="card"><div class="row" style="margin-bottom:7px"><div><div class="val" style="font-size:14px">${s.name}</div><div class="lbl" style="margin-top:2px">${s.cond}</div></div><span class="badge" style="background:${s.pc};color:${s.ptc}">매칭 ${s.pct}</span></div><div class="row"><span class="ai-tag"><i class="ti ti-sparkles" style="font-size:10px"></i> AI 추천</span><span style="font-size:14px;font-weight:700">${s.amt}</span></div><div class="bar-wrap" style="margin-top:8px"><div class="bar-fill" style="width:${s.w}%;background:${s.wc}"></div></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">장학 조회</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="noti" style="background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3);margin-bottom:13px"><i class="ti ti-sparkles" style="color:#7EB3F8;font-size:15px"></i><div><div class="noti-t" style="color:#7EB3F8">AI 추천</div><div style="font-size:13px;font-weight:700;color:#fff">수혜 가능 3건</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">예상 총액 450만원</div></div></div>
+        <div class="sec-sep">마감 임박</div>
+        <div class="noti" style="background:rgba(220,74,61,0.12);border-color:rgba(220,74,61,0.3)"><i class="ti ti-clock" style="color:#FCA5A5"></i><div><div class="noti-t" style="color:#FCA5A5">국가근로장학금 마감</div><div class="noti-s">11/23 · D-12</div></div></div>
+        <div class="sec-sep">추천 장학금</div>
+        ${[['성적 우수 (1종)','200만원','98%','rgba(37,99,235,0.2)','#7EB3F8'],['국가근로장학금','230만원','85%','rgba(5,150,105,0.2)','#6EE7B7'],['공학인재 장학','100만원','72%','rgba(217,119,6,0.2)','#FCD34D']].map(([n,a,m,bg,fg])=>`<div class="row" style="padding:7px 0;border-bottom:1px solid var(--border)"><div><div style="font-size:12px;font-weight:600">${n}</div><div class="lbl">${a}</div></div><span class="badge" style="background:${bg};color:${fg}">${m}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. 등록 ══ -->
+<div class="screen" id="s5">
+  <div class="screen-title"><i class="ti ti-credit-card"></i>등록</div>
+  <p class="screen-sub">등록금 AI 계산기 · 납부 기한 단계별 경보 · 장학 차감 자동 계산 | AI 범주: NLP · 자동화 · 경보</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/deungrok</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 등록</div>
+        <div class="page-title"><i class="ti ti-credit-card"></i>등록</div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-num" style="color:#0D9488;font-size:16px">납부 완료</div><div class="stat-lbl">2025-2 현황</div></div>
+          <div class="stat-box"><div class="stat-num" style="font-size:15px">384만</div><div class="stat-lbl">실납부액</div></div>
+          <div class="stat-box"><div class="stat-num" style="font-size:15px">2026-1</div><div class="stat-lbl">다음 등록</div></div>
+        </div>
+        <div class="sec-sep">등록금 AI 계산기 — 2026-1 예상</div>
+        <div class="card">
+          <div class="row" style="margin-bottom:8px"><span class="lbl">기본 등록금</span><span class="val">4,800,000원</span></div>
+          <div class="row" style="margin-bottom:8px"><span class="lbl">성적 우수 장학 차감</span><span style="font-size:13px;font-weight:600;color:#0D9488">-2,000,000원</span></div>
+          <div class="row" style="margin-bottom:8px"><span class="lbl">국가장학금 차감</span><span style="font-size:13px;font-weight:600;color:#0D9488">-960,000원</span></div>
+          <hr class="divl">
+          <div class="row"><span style="font-size:13px;font-weight:600">예상 실납부액</span><span style="font-size:20px;font-weight:700;color:#378ADD">1,840,000원</span></div>
+        </div>
+        <div class="sec-sep">납부 이력</div>
+        <table class="tbl">
+          <thead><tr><th>학기</th><th>납부액</th><th>납부일</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td>2025-2</td><td>3,840,000</td><td>2025.08.29</td><td><span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">완료</span></td></tr>
+            <tr><td>2025-1</td><td>3,840,000</td><td>2025.02.27</td><td><span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">완료</span></td></tr>
+            <tr><td>2024-2</td><td>4,200,000</td><td>2024.08.30</td><td><span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">완료</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">등록</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="noti" style="background:rgba(13,148,136,0.15);border-color:rgba(13,148,136,0.3);margin-bottom:13px"><i class="ti ti-circle-check" style="color:#5EEAD4;font-size:16px"></i><div><div class="noti-t" style="color:#5EEAD4">2025-2 납부 완료</div><div style="font-size:12px;font-weight:600;color:#fff">3,840,000원</div><div class="noti-s">2025.08.29</div></div></div>
+        <div class="sec-sep">다음 등록 예정</div>
+        <div class="noti"><i class="ti ti-calendar" style="color:var(--sub)"></i><div><div style="font-size:12px;font-weight:600">2026-1 등록금 납부</div><div class="noti-s">2026.02.23~02.27 예정</div></div></div>
+        <div class="sec-sep">AI 예상 금액</div>
+        <div class="card-sm"><div class="row"><span class="lbl">기본 등록금</span><span style="font-size:12px;font-weight:600">4,800,000원</span></div><div class="row"><span class="lbl">장학 차감</span><span style="font-size:12px;font-weight:600;color:#0D9488">-2,960,000원</span></div><hr class="divl"><div class="row"><span class="lbl">예상 실납부</span><span style="font-size:15px;font-weight:700;color:#378ADD">1,840,000원</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 6. 졸업 ══ -->
+<div class="screen" id="s6">
+  <div class="screen-title"><i class="ti ti-school"></i>졸업 관리</div>
+  <p class="screen-sub">졸업요건 AI 체커 · 졸업 예측 시뮬레이션 · 논문 일정 관리 | AI 범주: 자동화 · 예측 · 의사결정</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/joeop</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 졸업 관리</div>
+        <div class="page-title"><i class="ti ti-school"></i>졸업 관리</div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="stat-num" style="color:#378ADD">108</div><div class="stat-lbl">이수 학점</div></div>
+          <div class="stat-box"><div class="stat-num">130</div><div class="stat-lbl">필요 학점</div></div>
+          <div class="stat-box"><div class="stat-num" style="color:#FCD34D">22</div><div class="stat-lbl">잔여 학점</div></div>
+        </div>
+        <div class="sec-sep">졸업요건 AI 체커</div>
+        ${[{l:'전공필수',d:36,t:36,ok:true},{l:'전공선택',d:42,t:54,ok:false},{l:'교양필수',d:18,t:18,ok:true},{l:'교양선택',d:12,t:22,ok:false}].map(r=>`<div style="margin-bottom:11px"><div class="row" style="margin-bottom:4px"><span class="lbl">${r.l}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px">${r.d}/${r.t}학점</span><span class="badge" style="background:${r.ok?'rgba(5,150,105,0.2)':'rgba(220,74,61,0.2)'};color:${r.ok?'#6EE7B7':'#FCA5A5'}">${r.ok?'충족':'미충족'}</span></div></div><div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(r.d/r.t*100)}%;background:${r.ok?'#059669':'#2563EB'}"></div></div></div>`).join('')}
+        <div class="sec-sep">졸업 예측 시뮬레이션</div>
+        <div class="card"><div class="row"><span class="lbl">현재 이수 학점</span><span class="val">108학점</span></div><div class="row"><span class="lbl">학기당 평균 이수</span><span class="val">18학점</span></div><hr class="divl"><div class="row"><span class="lbl">AI 예측 졸업 시점</span><span style="font-size:16px;font-weight:700;color:#378ADD">2026년 2월</span></div><div style="font-size:11px;color:var(--sub);margin-top:6px">전공선택 12학점 + 교양선택 10학점 이수 필요</div></div>
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">졸업 관리</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 120 70" width="120" height="70">
+            <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="10" stroke-linecap="round"/>
+            <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="#2563EB" stroke-width="10" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="27"/>
+            <text x="60" y="55" text-anchor="middle" font-size="17" font-weight="700" fill="#E2E8F0">83%</text>
+            <text x="60" y="68" text-anchor="middle" font-size="9" fill="#94A3B8">졸업 진행률</text>
+          </svg>
+        </div>
+        <div class="sec-sep">요건 현황</div>
+        ${[['전공필수','충족',true],['전공선택','12학점 부족',false],['교양필수','충족',true],['교양선택','10학점 부족',false]].map(([n,s,ok])=>`<div class="row" style="padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px">${n}</span><span class="badge" style="background:${ok?'rgba(5,150,105,0.2)':'rgba(220,74,61,0.2)'};color:${ok?'#6EE7B7':'#FCA5A5'}">${s}</span></div>`).join('')}
+        <div class="sec-sep">AI 예측</div>
+        <div class="noti" style="background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3)"><i class="ti ti-calendar-check" style="color:#7EB3F8"></i><div style="font-size:11px;color:#C7DCF8;line-height:1.5">예측 졸업 <strong style="color:#fff">2026년 2월</strong><br>잔여 22학점 이수 필요</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 7. 진로·고도화 ══ -->
+<div class="screen" id="s7">
+  <div class="screen-title"><i class="ti ti-map"></i>진로·고도화</div>
+  <p class="screen-sub">AI 진로 로드맵 · 글쓰기 AI 보조 · CQI 피드백 AI 분석 | AI 범주: 추천 · 개인화 · NLP · 의사결정</p>
+  <hr class="dv">
+  <div class="dual">
+    <div class="web-frame">
+      <div class="web-bar"><div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div><div class="web-url">dankook.ac.kr/portal/jinro</div></div>
+      <div class="web-body">
+        <div class="breadcrumb">홈 › 진로·고도화</div>
+        <div class="page-title"><i class="ti ti-map"></i>진로·고도화</div>
+        <div class="sec-sep">AI 진로 로드맵</div>
+        <div class="card">
+          <div style="font-size:12px;color:var(--sub);margin-bottom:10px">목표: <strong style="color:#fff">백엔드 개발자</strong> — 전공 컴퓨터공학 · GPA 3.82</div>
+          <div>${[{y:'2025',dot:'#0D9488',done:true,items:'정보처리기사 취득, 캡스톤 프로젝트'},{y:'2026.2',dot:'#2563EB',done:false,items:'졸업, SQLD 취득, 인턴십'},{y:'2026',dot:'#534AB7',done:false,items:'신입 공채 지원 (네이버·카카오·라인)'}].map(t=>`<div class="tl-item"><div class="tl-dot" style="background:${t.dot};${!t.done?'opacity:0.4':''}"></div><div class="tl-year" style="color:${t.done?'var(--sub)':'#fff'}">${t.y}</div><div style="font-size:12px;color:${t.done?'var(--sub)':'#E2E8F0'}">${t.items}</div></div>`).join('')}</div>
+        </div>
+        <div class="sec-sep">글쓰기 AI 보조</div>
+        <div class="card">
+          <div class="row" style="margin-bottom:8px"><span class="val" style="font-size:13px">캡스톤 최종 보고서</span><span class="ai-tag"><i class="ti ti-sparkles" style="font-size:10px"></i> AI 분석 중</span></div>
+          ${[{l:'논리 구조',s:88},{l:'참고문헌 형식',s:72},{l:'맞춤법',s:95}].map(r=>`<div style="margin-bottom:8px"><div class="row" style="margin-bottom:3px"><span class="lbl">${r.l}</span><span style="font-size:12px;font-weight:600">${r.s}점</span></div><div class="bar-wrap"><div class="bar-fill" style="width:${r.s}%;background:${r.s>=90?'#059669':r.s>=75?'#2563EB':'#D97706'}"></div></div></div>`).join('')}
+          <div style="font-size:11px;color:var(--sub);margin-top:6px;padding:8px;background:rgba(83,74,183,0.15);border-radius:9px;border:1px solid rgba(83,74,183,0.3)"><i class="ti ti-sparkles" style="font-size:11px;color:#A89FF8;vertical-align:-2px"></i> AI 제안: 3장 결론 부분에서 연구 한계점을 추가하면 완성도가 높아집니다.</div>
+        </div>
+        <div class="sec-sep">CQI 피드백 AI 분석</div>
+        <div class="card">
+          <div class="row" style="margin-bottom:8px"><span class="val" style="font-size:13px">데이터베이스 설계 (2025-2)</span></div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <div style="flex:1;text-align:center;padding:8px;background:rgba(13,148,136,0.15);border-radius:9px"><div style="font-size:18px;font-weight:700;color:#5EEAD4">68%</div><div style="font-size:10px;color:#0D9488">긍정</div></div>
+            <div style="flex:1;text-align:center;padding:8px;background:rgba(217,119,6,0.15);border-radius:9px"><div style="font-size:18px;font-weight:700;color:#FCD34D">24%</div><div style="font-size:10px;color:#D97706">개선 요청</div></div>
+            <div style="flex:1;text-align:center;padding:8px;background:rgba(255,255,255,0.05);border-radius:9px"><div style="font-size:18px;font-weight:700">8%</div><div style="font-size:10px;color:var(--sub)">중립</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--sub)">주요 키워드: <span style="color:#5EEAD4;font-weight:600">실습 유익 · 설명 명확</span> · <span style="color:#FCD34D;font-weight:600">과제 양 조정 필요</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="mob-frame">
+      <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:11px"></i></span></div>
+      <div class="mob-topbar"><i class="ti ti-chevron-left" style="font-size:15px;color:var(--sub)"></i><div class="mob-topbar-title">진로·고도화</div><i class="ti ti-bell" style="font-size:15px;color:var(--sub)"></i></div>
+      <div class="mob-body">
+        <div class="sec-sep">AI 진로 로드맵</div>
+        <div class="card-sm" style="background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.25)">
+          <div style="font-size:12px;font-weight:600;color:#7EB3F8;margin-bottom:6px">백엔드 개발자 로드맵</div>
+          ${[['정보처리기사','취득 완료','#0D9488'],['SQLD','2026 목표','#2563EB'],['인턴십','2026 목표','#534AB7']].map(([n,s,c])=>`<div class="row" style="padding:3px 0"><span style="font-size:11px;color:#C7DCF8">${n}</span><span style="font-size:10px;font-weight:600;color:${c}">${s}</span></div>`).join('')}
+        </div>
+        <div class="sec-sep">글쓰기 AI</div>
+        <div class="card-sm">
+          <div style="font-size:12px;font-weight:600;margin-bottom:6px">캡스톤 보고서</div>
+          ${[['논리 구조',88],['참고문헌',72],['맞춤법',95]].map(([n,s])=>`<div style="margin-bottom:5px"><div class="row" style="margin-bottom:2px"><span class="lbl">${n}</span><span style="font-size:11px;font-weight:600">${s}점</span></div><div class="bar-wrap"><div class="bar-fill" style="width:${s}%;background:${s>=90?'#059669':s>=75?'#2563EB':'#D97706'}"></div></div></div>`).join('')}
+        </div>
+        <div class="sec-sep">CQI 분석</div>
+        <div class="noti" style="background:rgba(13,148,136,0.15);border-color:rgba(13,148,136,0.3)"><i class="ti ti-message-circle" style="color:#5EEAD4"></i><div style="font-size:11px;color:#A7F3E0;line-height:1.5">긍정 68% · 개선요청 24%<br><span style="color:#0D9488">과제 양 조정 피드백 多</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer style="border-top:1px solid var(--border);padding:18px 2rem;text-align:center;color:var(--sub);font-size:12px">
+  단국대학교 디지털정보원 정보기획팀 &nbsp;|&nbsp; 학사정보시스템 AI 서비스 — 8개 메뉴 상세 화면 &nbsp;|&nbsp; 2025
+</footer>
+
+<script>
+const COLORS = ['#185FA5','#0F6E56','#3B6D11','#854F0B','#185FA5','#993C1D','#3C3489','#993556'];
+function go(idx, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('on');
+    b.style.background = '';
+    b.style.borderColor = '';
+  });
+  document.getElementById('s'+idx).classList.add('active');
+  btn.classList.add('on');
+  btn.style.background = COLORS[idx];
+  btn.style.borderColor = COLORS[idx];
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
