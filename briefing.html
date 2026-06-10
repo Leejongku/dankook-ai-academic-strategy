@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단국대학교 AI 브리핑</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;background:#0D1B2A;color:#E2E8F0;min-height:100vh}
+:root{
+  --navy:#0D1B2A;--navy2:#152236;--blue:#2563EB;--sky:#378ADD;
+  --teal:#0D9488;--green:#059669;--amber:#D97706;--coral:#DC4A3D;
+  --purple:#534AB7;--text:#E2E8F0;--sub:#94A3B8;
+  --border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.05);--card2:rgba(255,255,255,0.09)
+}
+
+/* ── 헤더 ── */
+header{
+  background:rgba(13,27,42,0.97);border-bottom:1px solid var(--border);
+  padding:0 1.5rem;position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(12px);display:flex;align-items:center;
+  justify-content:space-between;height:56px;
+}
+.logo{font-size:15px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px}
+.logo-sub{font-size:11px;color:var(--sky);font-weight:400}
+.header-right{display:flex;align-items:center;gap:10px}
+.date-badge{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:5px}
+.ai-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(37,99,235,0.2);color:#7EB3F8;border:1px solid rgba(37,99,235,0.25);display:flex;align-items:center;gap:4px}
+
+/* ── 메인 ── */
+main{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+
+/* ── 히어로 배너 ── */
+.hero{
+  background:linear-gradient(135deg,rgba(37,99,235,0.15) 0%,rgba(13,148,136,0.1) 100%);
+  border:1px solid rgba(37,99,235,0.2);border-radius:16px;
+  padding:1.5rem 2rem;margin-bottom:1.5rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.hero-left h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:5px}
+.hero-left p{font-size:13px;color:var(--sub);line-height:1.6}
+.hero-stat{display:flex;gap:20px}
+.hstat{text-align:center}
+.hstat-n{font-size:22px;font-weight:700;color:#7EB3F8}
+.hstat-l{font-size:11px;color:var(--sub);margin-top:2px}
+.batch-info{
+  display:flex;align-items:center;gap:6px;font-size:11px;
+  color:var(--sub);padding:6px 12px;
+  background:rgba(255,255,255,0.04);border-radius:20px;
+  border:1px solid var(--border);margin-top:10px;
+}
+.batch-dot{width:7px;height:7px;border-radius:50%;background:#6EE7B7;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ── 인기 검색어 ── */
+.keyword-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.5rem}
+.kw-title{font-size:12px;font-weight:500;color:var(--sub);display:flex;align-items:center;gap:5px;margin-bottom:8px}
+.kw-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;padding:5px 12px;border-radius:20px;
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--text);cursor:pointer;transition:all .15s;
+}
+.kw-chip:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.12)}
+.kw-rank{font-size:10px;font-weight:700;color:var(--amber)}
+
+/* ── 섹션 제목 ── */
+.section-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.section-title{
+  font-size:15px;font-weight:600;color:#fff;
+  display:flex;align-items:center;gap:7px;
+}
+.section-more{font-size:11px;color:var(--sub);cursor:pointer;display:flex;align-items:center;gap:3px}
+.section-more:hover{color:var(--text)}
+
+/* ── 2단 그리드 ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:1.5rem}
+@media(max-width:720px){.grid-2,.grid-3{grid-template-columns:1fr}.hero{flex-direction:column}.hero-stat{justify-content:center}}
+
+/* ── 카드 공통 ── */
+.card{
+  background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+}
+.card-hd{
+  padding:12px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-hd-title{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:6px}
+.card-hd-title i{font-size:15px}
+.card-body{padding:12px 14px}
+
+/* ── 일정 카드 ── */
+.schedule-item{
+  display:flex;gap:10px;padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  cursor:pointer;transition:background .12s;
+}
+.schedule-item:last-child{border-bottom:none}
+.schedule-item:hover{margin:-0 -4px;padding:9px 4px;border-radius:8px;background:rgba(255,255,255,0.05)}
+.sched-dday{
+  flex-shrink:0;width:42px;text-align:center;
+  padding:4px 0;border-radius:8px;
+  font-size:11px;font-weight:700;line-height:1.2;
+}
+.sched-main{flex:1}
+.sched-title{font-size:12px;font-weight:600;color:#fff;margin-bottom:2px}
+.sched-sub{font-size:11px;color:var(--sub)}
+.sched-period{font-size:10px;margin-top:3px;color:var(--sub)}
+.ai-summary-box{
+  font-size:11px;color:#C7DCF8;line-height:1.6;
+  padding:8px 10px;background:rgba(37,99,235,0.1);
+  border-radius:8px;border-left:2px solid rgba(37,99,235,0.4);
+  margin-top:6px;
+}
+.ai-sum-label{font-size:10px;font-weight:600;color:#7EB3F8;margin-bottom:3px;display:flex;align-items:center;gap:3px}
+
+/* ── 게시글 카드 ── */
+.post-item{
+  padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+  cursor:pointer;
+}
+.post-item:last-child{border-bottom:none}
+.post-item:hover .post-title{color:#7EB3F8}
+.post-cat{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;margin-bottom:4px}
+.post-title{font-size:12px;font-weight:600;color:#fff;margin-bottom:3px;transition:color .12s;line-height:1.4}
+.post-ai-sum{font-size:11px;color:var(--sub);line-height:1.5;margin-bottom:4px}
+.post-meta{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--sub)}
+.post-meta span{display:flex;align-items:center;gap:2px}
+
+/* ── 공지 카드 ── */
+.notice-item{
+  display:flex;gap:10px;padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;
+}
+.notice-item:last-child{border-bottom:none}
+.notice-item:hover .notice-title{color:#7EB3F8}
+.notice-icon{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.notice-title{font-size:12px;font-weight:600;color:#fff;margin-bottom:3px;transition:color .12s;line-height:1.4}
+.notice-sum{font-size:11px;color:var(--sub);line-height:1.5}
+.notice-meta{font-size:10px;color:var(--sub);margin-top:3px}
+
+/* ── 인기 메뉴 카드 ── */
+.menu-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;
+  transition:all .12s;
+}
+.menu-item:last-child{border-bottom:none}
+.menu-item:hover{padding:8px 6px;margin:0 -6px;border-radius:8px;background:rgba(255,255,255,0.05)}
+.menu-rank{font-size:13px;font-weight:700;color:var(--sub);width:20px;text-align:center;flex-shrink:0}
+.menu-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.menu-name{flex:1;font-size:12px;font-weight:600;color:#fff}
+.menu-cnt{font-size:10px;color:var(--sub);text-align:right}
+.menu-trend{font-size:10px;display:flex;align-items:center;gap:2px}
+
+/* ── 탭 ── */
+.tab-row{display:flex;gap:5px;margin-bottom:12px}
+.tab{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;font-family:inherit;transition:all .12s}
+.tab:hover{background:var(--card2);color:var(--text)}
+.tab.on{color:#fff;font-weight:600;border-color:transparent}
+
+/* ── 배치 타임라인 ── */
+.timeline{display:flex;align-items:center;gap:0;margin-bottom:1.5rem;overflow-x:auto;padding-bottom:4px}
+.tl-step{display:flex;flex-direction:column;align-items:center;min-width:100px}
+.tl-step-inner{display:flex;align-items:center;width:100%}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.tl-line{flex:1;height:1px;background:var(--border)}
+.tl-label{font-size:10px;color:var(--sub);margin-top:5px;text-align:center;line-height:1.4}
+.tl-time{font-size:10px;font-weight:600;margin-top:2px;text-align:center}
+
+footer{border-top:1px solid var(--border);padding:14px 1.5rem;text-align:center;color:var(--sub);font-size:11px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <i class="ti ti-sparkles" style="font-size:18px;color:#7EB3F8" aria-hidden="true"></i>
+    단국대학교 AI 브리핑
+    <span class="logo-sub">학사정보시스템</span>
+  </div>
+  <div class="header-right">
+    <div class="date-badge"><i class="ti ti-calendar" style="font-size:13px" aria-hidden="true"></i><span id="todayDate"></span></div>
+    <div class="ai-badge"><i class="ti ti-robot" style="font-size:12px" aria-hidden="true"></i>AI 요약</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 히어로 -->
+  <div class="hero">
+    <div class="hero-left">
+      <h1>오늘의 학사 브리핑</h1>
+      <p>학사 일정·공지사항·게시판을 AI가 요약했습니다.<br>중요한 내용만 먼저 확인하고, 원문은 링크로 바로 이동하세요.</p>
+      <div class="batch-info">
+        <div class="batch-dot"></div>
+        오전 3:00 배치 완료 · 오늘 기준 데이터 · 익일 오전 3시 업데이트
+      </div>
+    </div>
+    <div class="hero-stat">
+      <div class="hstat"><div class="hstat-n">6</div><div class="hstat-l">임박 일정</div></div>
+      <div class="hstat"><div class="hstat-n">12</div><div class="hstat-l">신규 공지</div></div>
+      <div class="hstat"><div class="hstat-n">34</div><div class="hstat-l">AI 요약 게시글</div></div>
+    </div>
+  </div>
+
+  <!-- 인기 검색어 -->
+  <div style="margin-bottom:1.5rem">
+    <div class="kw-title"><i class="ti ti-trending-up" style="font-size:14px;color:var(--amber)" aria-hidden="true"></i>오늘의 인기 검색어</div>
+    <div class="keyword-row" id="keywords"></div>
+  </div>
+
+  <!-- 임박 일정 + 공지사항 -->
+  <div class="section-hd">
+    <div class="section-title"><i class="ti ti-calendar-event" aria-hidden="true"></i>마감 임박 학사 일정</div>
+    <div class="section-more"><i class="ti ti-chevron-right" aria-hidden="true"></i>전체 보기</div>
+  </div>
+  <div class="grid-2" style="margin-bottom:1.5rem">
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-hd-title" style="color:#FCA5A5"><i class="ti ti-alert-circle" style="color:#DC4A3D" aria-hidden="true"></i>긴급 · D-3 이내</div>
+        <span style="font-size:10px;color:var(--sub)">3건</span>
+      </div>
+      <div class="card-body" id="urgentList"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd">
+        <div class="card-hd-title" style="color:#FCD34D"><i class="ti ti-clock" style="color:#D97706" aria-hidden="true"></i>D-4 ~ D-14 일정</div>
+        <span style="font-size:10px;color:var(--sub)">3건</span>
+      </div>
+      <div class="card-body" id="soonList"></div>
+    </div>
+  </div>
+
+  <!-- AI 게시글 요약 -->
+  <div class="section-hd">
+    <div class="section-title"><i class="ti ti-sparkles" aria-hidden="true"></i>AI 요약 게시판</div>
+    <div class="section-more"><i class="ti ti-chevron-right" aria-hidden="true"></i>전체 보기</div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem">
+    <div class="card-hd" style="padding:10px 14px">
+      <div class="tab-row" id="postTabs"></div>
+      <div style="font-size:11px;color:var(--sub)">AI가 오전 3시에 요약</div>
+    </div>
+    <div class="card-body" id="postList"></div>
+  </div>
+
+  <!-- 공지사항 + 인기 메뉴 -->
+  <div class="grid-2">
+    <div>
+      <div class="section-hd">
+        <div class="section-title"><i class="ti ti-bell" aria-hidden="true"></i>주요 공지사항</div>
+        <div class="section-more"><i class="ti ti-chevron-right" aria-hidden="true"></i>전체</div>
+      </div>
+      <div class="card">
+        <div class="card-body" id="noticeList"></div>
+      </div>
+    </div>
+    <div>
+      <div class="section-hd">
+        <div class="section-title"><i class="ti ti-fire" aria-hidden="true"></i>오늘 인기 메뉴</div>
+        <div class="section-more"><i class="ti ti-chevron-right" aria-hidden="true"></i>전체</div>
+      </div>
+      <div class="card">
+        <div class="card-body" id="menuList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 배치 작동 방식 -->
+  <div style="margin-top:2rem">
+    <div class="section-hd">
+      <div class="section-title"><i class="ti ti-settings-automation" aria-hidden="true"></i>AI 브리핑 작동 방식</div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="timeline" id="timeline"></div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.8;padding:10px 0 0">
+          <strong style="color:var(--text)">비용 최적화 구조</strong> — 실시간 AI 호출 없이 매일 오전 3시 1회 배치로 전체 데이터를 요약합니다.
+          동일 내용은 캐시에서 제공하므로 토큰 비용이 최소화됩니다.
+          학생이 질문할 때마다 AI를 호출하는 챗봇 방식이 아닌, 사전 요약된 데이터를 보여주는 단방향 브리핑 방식입니다.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  단국대학교 디지털정보원 정보기획팀 &nbsp;|&nbsp; AI 브리핑 서비스 — 매일 오전 3:00 업데이트 &nbsp;|&nbsp; 2025
+</footer>
+
+<script>
+// 날짜
+const now = new Date();
+const dateStr = now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일 (' + ['일','월','화','수','목','금','토'][now.getDay()] + ')';
+document.getElementById('todayDate').textContent = dateStr;
+
+// ── 인기 검색어
+const keywords = [
+  {rank:1,text:'수강신청'},{rank:2,text:'성적 조회'},{rank:3,text:'장학금 신청'},
+  {rank:4,text:'휴학 신청'},{rank:5,text:'졸업 자가진단'},{rank:6,text:'등록금 납부'},
+  {rank:7,text:'강의 계획서'},{rank:8,text:'출석 확인'},{rank:9,text:'유고결석'},
+  {rank:10,text:'공인어학 성적'}
+];
+document.getElementById('keywords').innerHTML = keywords.map(k=>`
+  <div class="kw-chip">
+    <span class="kw-rank">${k.rank}</span>
+    ${k.text}
+  </div>`).join('');
+
+// ── 임박 일정
+const urgent = [
+  {dday:'D-1',color:'#DC4A3D',bg:'rgba(220,74,61,0.2)',title:'2025-2 수강신청 변경',period:'~6월 11일(수) 17:00',sum:'수강 변경·철회 마지막 기회. 성적 영향 전에 반드시 확인하세요.'},
+  {dday:'D-2',color:'#DC4A3D',bg:'rgba(220,74,61,0.15)',title:'등록금 분납 2차 납부',period:'~6월 12일(목)',sum:'미납 시 수강 취소 처리됩니다. 학생처 문의: 031-8005-2114'},
+  {dday:'D-3',color:'#EF9F27',bg:'rgba(239,159,39,0.15)',title:'교직 이수 신청 마감',period:'~6월 13일(금) 18:00',sum:'교직 이수 희망자 대상. 사범대 학생부에서 신청 가능합니다.'},
+];
+const soon = [
+  {dday:'D-7',color:'#7EB3F8',bg:'rgba(37,99,235,0.15)',title:'계절학기 수강신청',period:'6월 17일(화) 09:00 ~ 20일',sum:'하계 계절학기 수강신청. 제한 학점·수강료 사전 확인 필요.'},
+  {dday:'D-10',color:'#5EEAD4',bg:'rgba(13,148,136,0.15)',title:'성적 이의신청 기간',period:'6월 20일(금) ~ 25일(수)',sum:'중간고사 성적 확인 후 오류 발견 시 담당 교수에게 신청하세요.'},
+  {dday:'D-14',color:'#A89FF8',bg:'rgba(83,74,183,0.15)',title:'하계 현장실습 신청',period:'6월 24일(화) 마감',sum:'산학협력처 현장실습 지원 마감. 지원 자격 사전 확인 필수.'},
+];
+function schedHTML(list){
+  return list.map(s=>`
+    <div class="schedule-item">
+      <div class="sched-dday" style="background:${s.bg};color:${s.color}">${s.dday}</div>
+      <div class="sched-main">
+        <div class="sched-title">${s.title}</div>
+        <div class="sched-period"><i class="ti ti-clock" style="font-size:10px;vertical-align:-1px" aria-hidden="true"></i> ${s.period}</div>
+        <div class="ai-summary-box">
+          <div class="ai-sum-label"><i class="ti ti-sparkles" style="font-size:10px" aria-hidden="true"></i> AI 요약</div>
+          ${s.sum}
+        </div>
+      </div>
+    </div>`).join('');
+}
+document.getElementById('urgentList').innerHTML = schedHTML(urgent);
+document.getElementById('soonList').innerHTML = schedHTML(soon);
+
+// ── 게시글 탭 + 데이터
+const POST_CATS = ['전체','학사','장학','비교과','채용·공모전','국제교류'];
+const POSTS = [
+  {cat:'학사',catColor:'rgba(37,99,235,0.2)',catFg:'#7EB3F8',title:'2025학년도 2학기 수강신청 안내 (변경·철회 포함)',sum:'수강 변경은 6월 11일 17시까지, 철회는 6월 20일까지 가능합니다. 철회 과목은 성적표에 W로 표기되며 평점에 영향 없음.',date:'06.10',dept:'학사팀',views:2841},
+  {cat:'장학',catColor:'rgba(5,150,105,0.2)',catFg:'#6EE7B7',title:'2025-2 성적우수 장학생 선발 기준 및 신청 안내',sum:'직전 학기 성적 3.8 이상, 12학점 이상 이수자 대상. 신청 기간 6월 16일~23일, 포털 장학 메뉴에서 직접 신청.',date:'06.09',dept:'장학팀',views:1923},
+  {cat:'비교과',catColor:'rgba(83,74,183,0.2)',catFg:'#A89FF8',title:'2025 하계 AI·데이터 분석 집중 교육 프로그램 모집',sum:'방학 중 AI·파이썬·데이터 분석 5일 과정. 선착순 50명, 참가비 무료. 비교과 이수 인정.',date:'06.10',dept:'교육혁신원',views:1456},
+  {cat:'채용·공모전',catColor:'rgba(217,119,6,0.2)',catFg:'#FCD34D',title:'[삼성전자] 2025 하반기 인턴십 채용 공고 - 단국대 특별 전형',sum:'SW·HW·경영 직군 인턴십. 학점 3.0 이상, 전공 무관. 서류 마감 6월 20일. 취업지원팀 경유 추천서 발급 가능.',date:'06.09',dept:'취업지원팀',views:3241},
+  {cat:'학사',catColor:'rgba(37,99,235,0.2)',catFg:'#7EB3F8',title:'2025-2 교직과정 이수 신청 안내 (사범대·일반대)',sum:'교직 이수 희망자는 6월 13일 18시까지 신청 완료 필요. 2학년 이상, 성적 평균 75점 이상 충족 시 신청 가능.',date:'06.08',dept:'교무처',views:892},
+  {cat:'국제교류',catColor:'rgba(220,74,61,0.2)',catFg:'#FCA5A5',title:'2026년 봄 학기 해외 파견 교환학생 모집 공고',sum:'미국·유럽·아시아 32개 협정교 모집. TOEFL 80 이상 또는 IELTS 6.0 이상. 신청 기간 7월 1일~31일.',date:'06.10',dept:'국제교류팀',views:1102},
+];
+
+let activeCat = '전체';
+function renderPosts(){
+  const filtered = activeCat==='전체' ? POSTS : POSTS.filter(p=>p.cat===activeCat);
+  document.getElementById('postList').innerHTML = filtered.map(p=>`
+    <div class="post-item">
+      <span class="post-cat" style="background:${p.catColor};color:${p.catFg}">${p.cat}</span>
+      <div class="post-title">${p.title}</div>
+      <div class="post-ai-sum">
+        <span style="font-size:10px;color:#7EB3F8;font-weight:600;margin-right:4px"><i class="ti ti-sparkles" style="font-size:10px;vertical-align:-1px" aria-hidden="true"></i> AI</span>${p.sum}
+      </div>
+      <div class="post-meta">
+        <span><i class="ti ti-building" style="font-size:11px" aria-hidden="true"></i>${p.dept}</span>
+        <span><i class="ti ti-calendar" style="font-size:11px" aria-hidden="true"></i>${p.date}</span>
+        <span><i class="ti ti-eye" style="font-size:11px" aria-hidden="true"></i>${p.views.toLocaleString()}</span>
+      </div>
+    </div>`).join('');
+}
+document.getElementById('postTabs').innerHTML = POST_CATS.map(c=>`
+  <button class="tab${c===activeCat?' on':''}" style="${c===activeCat?'background:#185FA5;border-color:#185FA5;':''}" onclick="switchTab('${c}',this)">${c}</button>`).join('');
+renderPosts();
+function switchTab(cat, btn){
+  activeCat = cat;
+  document.querySelectorAll('.tab').forEach(b=>{b.classList.remove('on');b.style.background='';b.style.borderColor='';});
+  btn.classList.add('on'); btn.style.background='#185FA5'; btn.style.borderColor='#185FA5';
+  renderPosts();
+}
+
+// ── 공지사항
+const notices = [
+  {icon:'ti-alert-triangle',iconBg:'rgba(220,74,61,0.2)',iconColor:'#FCA5A5',title:'[긴급] 6월 12일(목) 포털 시스템 점검',sum:'오전 2:00~4:00 전면 서비스 중단. 성적 입력·수강신청 변경 전날 완료 필요.',date:'06.10'},
+  {icon:'ti-award',iconBg:'rgba(5,150,105,0.2)',iconColor:'#6EE7B7',title:'국가근로장학생 2학기 근로 시작 안내',sum:'7월 1일부터 근로 시작. 배치 부서 확인 후 담당자 연락 필수.',date:'06.09'},
+  {icon:'ti-building-community',iconBg:'rgba(83,74,183,0.2)',iconColor:'#A89FF8',title:'죽전캠퍼스 중앙도서관 하계 운영 시간 변경',sum:'7월 1일~8월 31일 평일 09:00~21:00, 주말 10:00~18:00로 단축 운영.',date:'06.08'},
+  {icon:'ti-id-badge',iconBg:'rgba(217,119,6,0.2)',iconColor:'#FCD34D',title:'2025-2 재학생 학생증 재발급 안내',sum:'분실·훼손 학생증 재발급 신청 6월 1일~30일. 학생처 방문 또는 온라인 신청 가능.',date:'06.07'},
+];
+document.getElementById('noticeList').innerHTML = notices.map(n=>`
+  <div class="notice-item">
+    <div class="notice-icon" style="background:${n.iconBg}"><i class="ti ${n.icon}" style="color:${n.iconColor}" aria-hidden="true"></i></div>
+    <div>
+      <div class="notice-title">${n.title}</div>
+      <div class="notice-sum">${n.sum}</div>
+      <div class="notice-meta">${n.date}</div>
+    </div>
+  </div>`).join('');
+
+// ── 인기 메뉴
+const menus = [
+  {rank:1,icon:'ti-layout-grid',iconBg:'rgba(37,99,235,0.2)',iconColor:'#7EB3F8',name:'수강계획도우미',cnt:'82.4만',trend:'+12%',up:true},
+  {rank:2,icon:'ti-school',iconBg:'rgba(83,74,183,0.2)',iconColor:'#A89FF8',name:'자가진단시뮬레이션',cnt:'36.1만',trend:'+8%',up:true},
+  {rank:3,icon:'ti-list-check',iconBg:'rgba(13,148,136,0.2)',iconColor:'#5EEAD4',name:'수강신청',cnt:'34.9만',trend:'-3%',up:false},
+  {rank:4,icon:'ti-chart-bar',iconBg:'rgba(5,150,105,0.2)',iconColor:'#6EE7B7',name:'최종성적 조회',cnt:'21.3만',trend:'+5%',up:true},
+  {rank:5,icon:'ti-printer',iconBg:'rgba(220,74,61,0.2)',iconColor:'#FCA5A5',name:'등록금고지서출력',cnt:'14.9만',trend:'+21%',up:true},
+];
+document.getElementById('menuList').innerHTML = menus.map(m=>`
+  <div class="menu-item">
+    <div class="menu-rank">${m.rank}</div>
+    <div class="menu-icon" style="background:${m.iconBg}"><i class="ti ${m.icon}" style="color:${m.iconColor}" aria-hidden="true"></i></div>
+    <div class="menu-name">${m.name}</div>
+    <div>
+      <div class="menu-cnt">${m.cnt}</div>
+      <div class="menu-trend" style="color:${m.up?'#6EE7B7':'#FCA5A5'};justify-content:flex-end">
+        <i class="ti ti-trending-${m.up?'up':'down'}" style="font-size:11px" aria-hidden="true"></i>${m.trend}
+      </div>
+    </div>
+  </div>`).join('');
+
+// ── 배치 타임라인
+const steps = [
+  {icon:'ti-database',color:'#378ADD',bg:'rgba(37,99,235,0.2)',label:'데이터 수집',time:'03:00'},
+  {icon:'ti-robot',color:'#A89FF8',bg:'rgba(83,74,183,0.2)',label:'AI 요약 생성',time:'03:10'},
+  {icon:'ti-device-floppy',color:'#6EE7B7',bg:'rgba(5,150,105,0.2)',label:'DB 저장',time:'03:25'},
+  {icon:'ti-check',color:'#FCD34D',bg:'rgba(217,119,6,0.2)',label:'캐시 갱신',time:'03:28'},
+  {icon:'ti-eye',color:'#FCA5A5',bg:'rgba(220,74,61,0.2)',label:'학생 노출',time:'06:00~'},
+];
+const tl = document.getElementById('timeline');
+steps.forEach((s,i)=>{
+  tl.innerHTML += `
+    <div class="tl-step">
+      <div class="tl-step-inner">
+        ${i>0?`<div class="tl-line"></div>`:''}
+        <div class="tl-dot" style="background:${s.bg}"><i class="ti ${s.icon}" style="color:${s.color};font-size:13px" aria-hidden="true"></i></div>
+        ${i<steps.length-1?`<div class="tl-line"></div>`:''}
+      </div>
+      <div class="tl-label">${s.label}</div>
+      <div class="tl-time" style="color:${s.color}">${s.time}</div>
+    </div>`;
+});
+</script>
+</body>
+</html>
