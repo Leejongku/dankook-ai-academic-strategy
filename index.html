@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학사정보시스템 AI 서비스 — 단국대학교</title>
+<style>
+  :root {
+    --navy:   #0D1B2A;
+    --navy2:  #152236;
+    --navy3:  #1E3A5F;
+    --blue:   #2563EB;
+    --sky:    #378ADD;
+    --teal:   #0D9488;
+    --green:  #059669;
+    --amber:  #D97706;
+    --coral:  #DC4A3D;
+    --purple: #534AB7;
+    --white:  #FFFFFF;
+    --gray1:  #F0F4F8;
+    --gray2:  #CBD5E1;
+    --gray3:  #64748B;
+    --gray4:  #334155;
+    --text:   #E2E8F0;
+    --subtext:#94A3B8;
+    --border: rgba(255,255,255,0.08);
+    --card:   rgba(255,255,255,0.05);
+    --card2:  rgba(255,255,255,0.09);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── 헤더 ── */
+  header {
+    background: rgba(13,27,42,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .logo { font-size: 15px; font-weight: 600; color: var(--white); letter-spacing: -0.02em; }
+  .logo span { color: var(--sky); margin-left: 6px; font-weight: 400; font-size: 13px; }
+  nav { display: flex; gap: 4px; }
+  nav a {
+    font-size: 12px; padding: 5px 12px; border-radius: 20px;
+    color: var(--subtext); text-decoration: none; transition: all .15s;
+  }
+  nav a:hover { background: var(--card2); color: var(--text); }
+  nav a.active { background: var(--blue); color: #fff; }
+
+  /* ── 메인 컨테이너 ── */
+  main { max-width: 1280px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+  section { margin-bottom: 4rem; }
+  .section-title {
+    font-size: 22px; font-weight: 700; color: var(--white);
+    margin-bottom: 6px; letter-spacing: -0.03em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title i { font-size: 20px; }
+  .section-sub { font-size: 13px; color: var(--subtext); margin-bottom: 24px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin-bottom: 24px; }
+
+  /* ── 탭 메뉴 ── */
+  .tab-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
+  .tab-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--subtext); cursor: pointer; transition: all .15s;
+    font-family: inherit;
+  }
+  .tab-btn:hover { background: var(--card2); color: var(--text); border-color: rgba(255,255,255,0.15); }
+  .tab-btn.on { border-color: transparent; color: #fff; font-weight: 600; }
+
+  /* ── 2단 레이아웃 (웹+모바일) ── */
+  .dual { display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; }
+
+  /* ── 웹 프레임 ── */
+  .web-frame {
+    background: #1a2332; border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+  .web-bar {
+    background: #111d2b; padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .web-dots { display: flex; gap: 5px; }
+  .wd { width: 10px; height: 10px; border-radius: 50%; }
+  .wd:nth-child(1){ background:#FF5F57; }
+  .wd:nth-child(2){ background:#FEBC2E; }
+  .wd:nth-child(3){ background:#28C840; }
+  .web-url {
+    flex: 1; background: rgba(255,255,255,0.06); border-radius: 6px;
+    padding: 4px 12px; font-size: 11px; color: var(--subtext);
+    font-family: 'SF Mono', monospace;
+  }
+  .web-body { padding: 20px; }
+  .breadcrumb { font-size: 11px; color: var(--subtext); margin-bottom: 10px; }
+  .page-title {
+    font-size: 18px; font-weight: 700; color: var(--white);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── 모바일 프레임 ── */
+  .mob-frame {
+    background: #1a2332; border: 1px solid var(--border);
+    border-radius: 28px; overflow: hidden; width: 260px;
+  }
+  .mob-status {
+    background: #111d2b; padding: 10px 18px 8px;
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--subtext);
+    border-bottom: 1px solid var(--border);
+  }
+  .mob-topbar {
+    background: #111d2b; padding: 11px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mob-topbar-title {
+    flex: 1; text-align: center; font-size: 14px;
+    font-weight: 600; color: var(--white);
+  }
+  .mob-body { padding: 14px; }
+
+  /* ── 공통 카드 ── */
+  .card {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+  }
+  .card-sm {
+    background: rgba(255,255,255,0.06); border-radius: 10px;
+    padding: 11px 13px; margin-bottom: 10px;
+  }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .row + .row { margin-top: 6px; }
+  .lbl { font-size: 11px; color: var(--subtext); }
+  .val { font-size: 13px; font-weight: 600; color: var(--white); }
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .divl { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+  /* ── Stat 박스 ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+  .stat-box {
+    background: rgba(255,255,255,0.06); border-radius: 10px;
+    padding: 12px 10px 10px; text-align: center;
+    border: 1px solid var(--border);
+  }
+  .stat-num { font-size: 22px; font-weight: 700; }
+  .stat-lbl { font-size: 10px; color: var(--subtext); margin-top: 2px; }
+
+  /* ── 진행 바 ── */
+  .bar-wrap { background: rgba(255,255,255,0.1); border-radius: 4px; height: 5px; margin-top: 5px; }
+  .bar-fill { height: 5px; border-radius: 4px; }
+
+  /* ── 알림 카드 ── */
+  .noti {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 11px 13px; border-radius: 10px; margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+  .noti i { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+  .noti-t { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .noti-s { font-size: 11px; color: var(--subtext); }
+
+  /* ── AI 태그 ── */
+  .ai-tag {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 10px; font-weight: 600; padding: 2px 7px;
+    background: rgba(37,99,235,0.2); color: #7EB3F8;
+    border-radius: 20px; border: 1px solid rgba(37,99,235,0.3);
+  }
+
+  /* ── 섹션 분리선 ── */
+  .sec-sep {
+    font-size: 10px; font-weight: 600; color: var(--subtext);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin: 16px 0 8px; padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ════════════════════════════════
+     구조도 섹션
+  ════════════════════════════════ */
+  .map-wrap {
+    background: #0f1c2d; border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; overflow-x: auto;
+  }
+  .map-grid {
+    display: grid;
+    grid-template-columns: 148px 28px 168px 28px 200px 28px 200px;
+    gap: 0; min-width: 820px;
+  }
+  .col-hd {
+    border-radius: 8px; padding: 8px 0;
+    text-align: center; font-size: 12px; font-weight: 600;
+    color: #fff; margin-bottom: 10px;
+  }
+  .ac { display: flex; align-items: center; justify-content: center; color: var(--subtext); font-size: 13px; }
+  .g-label {
+    font-size: 10px; font-weight: 600; color: var(--subtext);
+    text-transform: uppercase; letter-spacing: .07em;
+    padding: 7px 0 3px; border-top: 1px solid var(--border);
+    margin-top: 2px; display: flex; align-items: center; gap: 4px;
+    grid-column: 1 / -1;
+  }
+  .g-label:first-of-type { border-top: none; }
+  .map-row {
+    display: contents;
+  }
+  .mc {
+    border-radius: 8px; padding: 8px 10px;
+    margin-bottom: 5px; font-size: 11px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .mc-s { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+  .mc-a { background: rgba(45,43,94,0.8); border: 1px solid rgba(83,74,183,0.5); }
+  .mc-w { background: rgba(13,92,74,0.7); border: 1px solid rgba(29,158,117,0.4); }
+  .mc-m { background: rgba(92,18,8,0.7); border: 1px solid rgba(216,90,48,0.4); }
+  .mc-title { font-weight: 600; color: var(--white); margin-bottom: 2px; line-height: 1.3; }
+  .mc-sub { font-size: 10px; color: rgba(255,255,255,0.5); line-height: 1.3; }
+  .mc-tags { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 3px; }
+  .mt {
+    font-size: 9px; font-weight: 600; padding: 1px 5px;
+    border-radius: 20px; white-space: nowrap;
+  }
+  .mt-p { background: rgba(37,99,235,0.25); color: #7EB3F8; }
+  .mt-r { background: rgba(13,148,136,0.25); color: #5EEAD4; }
+  .mt-n { background: rgba(83,74,183,0.3); color: #A89FF8; }
+  .mt-al { background: rgba(220,74,61,0.25); color: #FCA5A5; }
+  .mt-au { background: rgba(217,119,6,0.25); color: #FCD34D; }
+  .mt-pe { background: rgba(219,39,119,0.2); color: #F9A8D4; }
+  .mt-d { background: rgba(5,150,105,0.25); color: #6EE7B7; }
+
+  /* 범례 */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 16px; padding: 10px 14px;
+    background: rgba(255,255,255,0.03); border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .leg { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--subtext); }
+
+  /* ── 반응형 ── */
+  @media (max-width: 768px) {
+    .dual { grid-template-columns: 1fr; }
+    .mob-frame { width: 100%; }
+    nav { display: none; }
+    main { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">단국대학교 학사정보시스템 <span>AI 서비스 포털</span></div>
+  <nav>
+    <a href="#janghak" class="active">장학</a>
+    <a href="#map">AI 구조도</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ════════════════════════
+       1. 장학 조회 UI
+  ════════════════════════ -->
+  <section id="janghak">
+    <div class="section-title"><i class="ti ti-award"></i> 장학 조회 — AI 추천 서비스</div>
+    <p class="section-sub">성적·소득·전공 조건을 AI가 자동 매칭하여 수혜 가능 장학금을 즉시 제시합니다.</p>
+    <hr class="divider">
+
+    <!-- 탭 -->
+    <div class="tab-bar">
+      <button class="tab-btn"><i class="ti ti-user-check"></i> 학적</button>
+      <button class="tab-btn"><i class="ti ti-book"></i> 수업</button>
+      <button class="tab-btn"><i class="ti ti-chart-bar"></i> 성적</button>
+      <button class="tab-btn"><i class="ti ti-calendar"></i> 학사일정</button>
+      <button class="tab-btn on" style="background:#2563EB;border-color:#2563EB"><i class="ti ti-award"></i> 장학</button>
+      <button class="tab-btn"><i class="ti ti-credit-card"></i> 등록</button>
+      <button class="tab-btn"><i class="ti ti-school"></i> 졸업</button>
+      <button class="tab-btn"><i class="ti ti-map"></i> 진로·고도화</button>
+    </div>
+
+    <div class="dual">
+
+      <!-- 웹 -->
+      <div class="web-frame">
+        <div class="web-bar">
+          <div class="web-dots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
+          <div class="web-url">dankook.ac.kr/portal/janghak</div>
+        </div>
+        <div class="web-body">
+          <div class="breadcrumb">홈 › 장학 조회</div>
+          <div class="page-title"><i class="ti ti-award"></i> 장학 조회</div>
+
+          <!-- 통계 -->
+          <div class="stat-grid">
+            <div class="stat-box"><div class="stat-num" style="color:#378ADD">3</div><div class="stat-lbl">수혜 가능 장학</div></div>
+            <div class="stat-box"><div class="stat-num" style="color:#ffffff">450만</div><div class="stat-lbl">예상 수혜액</div></div>
+            <div class="stat-box"><div class="stat-num" style="color:#FCD34D">D-12</div><div class="stat-lbl">최근 마감</div></div>
+          </div>
+
+          <div class="sec-sep">AI 추천 장학금</div>
+
+          <!-- 장학금 카드 1 -->
+          <div class="card">
+            <div class="row" style="margin-bottom:8px">
+              <div>
+                <div class="val" style="font-size:14px">성적 우수 장학 (1종)</div>
+                <div class="lbl" style="margin-top:2px">GPA 3.8 이상 · 본인 충족</div>
+              </div>
+              <span class="badge" style="background:rgba(37,99,235,0.2);color:#7EB3F8">매칭 98%</span>
+            </div>
+            <div class="row">
+              <span class="ai-tag"><i class="ti ti-sparkles" style="font-size:10px"></i> AI 추천</span>
+              <span style="font-size:14px;font-weight:700;color:#fff">200만원/학기</span>
+            </div>
+            <div class="bar-wrap" style="margin-top:10px"><div class="bar-fill" style="width:98%;background:#2563EB"></div></div>
+          </div>
+
+          <!-- 장학금 카드 2 -->
+          <div class="card">
+            <div class="row" style="margin-bottom:8px">
+              <div>
+                <div class="val" style="font-size:14px">국가근로장학금</div>
+                <div class="lbl" style="margin-top:2px">소득 3구간 이하 · 서류 제출 필요</div>
+              </div>
+              <span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">매칭 85%</span>
+            </div>
+            <div class="row">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span class="badge" style="background:rgba(220,74,61,0.2);color:#FCA5A5;font-size:10px">
+                  <i class="ti ti-clock" style="font-size:10px;vertical-align:-1px"></i> D-12
+                </span>
+                <span class="lbl">마감 11/23</span>
+              </div>
+              <span style="font-size:14px;font-weight:700;color:#fff">최대 230만원</span>
+            </div>
+            <div class="bar-wrap" style="margin-top:10px"><div class="bar-fill" style="width:85%;background:#059669"></div></div>
+          </div>
+
+          <!-- 장학금 카드 3 -->
+          <div class="card">
+            <div class="row" style="margin-bottom:8px">
+              <div>
+                <div class="val" style="font-size:14px">공학인재 장학</div>
+                <div class="lbl" style="margin-top:2px">공대 재학 · 지도교수 추천 필요</div>
+              </div>
+              <span class="badge" style="background:rgba(217,119,6,0.2);color:#FCD34D">매칭 72%</span>
+            </div>
+            <div class="row">
+              <span class="ai-tag"><i class="ti ti-sparkles" style="font-size:10px"></i> 서류 준비 가이드</span>
+              <span style="font-size:14px;font-weight:700;color:#fff">100만원</span>
+            </div>
+            <div class="bar-wrap" style="margin-top:10px"><div class="bar-fill" style="width:72%;background:#D97706"></div></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 모바일 -->
+      <div class="mob-frame">
+        <div class="mob-status"><span>9:41</span><span><i class="ti ti-wifi" style="font-size:12px"></i></span></div>
+        <div class="mob-topbar">
+          <i class="ti ti-chevron-left" style="font-size:16px;color:var(--subtext)"></i>
+          <div class="mob-topbar-title">장학 조회</div>
+          <i class="ti ti-bell" style="font-size:16px;color:var(--subtext)"></i>
+        </div>
+        <div class="mob-body">
+
+          <!-- AI 요약 카드 -->
+          <div class="noti" style="background:rgba(37,99,235,0.15);border-color:rgba(37,99,235,0.3);margin-bottom:14px">
+            <i class="ti ti-sparkles" style="color:#7EB3F8;font-size:16px;margin-top:1px"></i>
+            <div>
+              <div class="noti-t" style="color:#7EB3F8">AI 추천</div>
+              <div style="font-size:13px;font-weight:700;color:#fff">수혜 가능 장학금 3건</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.5)">예상 총액 450만원</div>
+            </div>
+          </div>
+
+          <!-- 마감 경보 -->
+          <div class="sec-sep">마감 임박</div>
+          <div class="noti" style="background:rgba(220,74,61,0.12);border-color:rgba(220,74,61,0.3)">
+            <i class="ti ti-clock" style="color:#FCA5A5"></i>
+            <div>
+              <div class="noti-t" style="color:#FCA5A5">국가근로장학금 마감</div>
+              <div class="noti-s">11/23 · D-12</div>
+            </div>
+          </div>
+
+          <!-- 추천 리스트 -->
+          <div class="sec-sep">추천 장학금</div>
+          <div class="card-sm" style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#fff">성적 우수 (1종)</div>
+              <div class="lbl">200만원</div>
+            </div>
+            <span class="badge" style="background:rgba(37,99,235,0.2);color:#7EB3F8">98%</span>
+          </div>
+          <div class="card-sm" style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#fff">국가근로장학금</div>
+              <div class="lbl">최대 230만원</div>
+            </div>
+            <span class="badge" style="background:rgba(5,150,105,0.2);color:#6EE7B7">85%</span>
+          </div>
+          <div class="card-sm" style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#fff">공학인재 장학</div>
+              <div class="lbl">100만원</div>
+            </div>
+            <span class="badge" style="background:rgba(217,119,6,0.2);color:#FCD34D">72%</span>
+          </div>
+
+          <!-- AI 서비스 안내 -->
+          <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid var(--border)">
+            <div class="ai-tag" style="margin-bottom:6px"><i class="ti ti-robot" style="font-size:10px"></i> AI 범주</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+              <span class="mt mt-r">추천</span>
+              <span class="mt mt-pe">개인화</span>
+              <span class="mt mt-al">경보</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════
+       2. AI 서비스 구조도
+  ════════════════════════ -->
+  <section id="map">
+    <div class="section-title"><i class="ti ti-sitemap"></i> 학생 대상 AI 서비스 전체 구조도</div>
+    <p class="section-sub">데이터 소스 → AI 처리 엔진 → 웹·모바일 접점으로 이어지는 전체 서비스 흐름입니다.</p>
+    <hr class="divider">
+
+    <!-- 범례 -->
+    <div class="legend">
+      <span style="font-size:11px;font-weight:600;color:var(--text);margin-right:4px">AI 범주:</span>
+      <span class="leg"><span class="mt mt-p">예측</span> Prediction</span>
+      <span class="leg"><span class="mt mt-r">추천</span> Recommendation</span>
+      <span class="leg"><span class="mt mt-n">NLP</span> 자연어처리</span>
+      <span class="leg"><span class="mt mt-al">경보</span> Alert</span>
+      <span class="leg"><span class="mt mt-au">자동화</span> Automation</span>
+      <span class="leg"><span class="mt mt-pe">개인화</span> Personalization</span>
+      <span class="leg"><span class="mt mt-d">의사결정</span> DSS</span>
+    </div>
+
+    <div class="map-wrap">
+      <div class="map-grid">
+
+        <!-- 컬럼 헤더 -->
+        <div class="col-hd" style="background:#333">데이터 소스</div>
+        <div></div>
+        <div class="col-hd" style="background:#2D2B5E">AI 처리 엔진</div>
+        <div></div>
+        <div class="col-hd" style="background:#0D5C4A">웹 정보시스템</div>
+        <div></div>
+        <div class="col-hd" style="background:#7A2010">모바일 앱</div>
+
+        <!-- ── 강의계획서 ── -->
+        <div class="g-label" style="grid-column:1/-1"><i class="ti ti-book" style="font-size:11px"></i> 수업 — 강의계획서</div>
+
+        <div class="mc mc-s"><div class="mc-title">강의계획서 DB</div><div class="mc-sub">주차·목표·평가·교수자</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">강의계획서 AI</div><div class="mc-sub">자동 요약·일정 추출</div><div class="mc-tags"><span class="mt mt-n">NLP</span><span class="mt mt-au">자동화</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">강의계획서 AI 요약 뷰</div><div class="mc-sub">3줄 요약·핵심 일정 표시</div><div class="mc-tags"><span class="mt mt-n">NLP</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">강의 챗봇</div><div class="mc-sub">"이번 주 과제 뭐야?"</div><div class="mc-tags"><span class="mt mt-n">NLP</span><span class="mt mt-pe">개인화</span></div></div>
+
+        <div class="mc mc-s"><div class="mc-title">성적 입력 비율</div><div class="mc-sub">중간·기말·과제·출석 배점</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">성적 비율 분석·알림</div><div class="mc-sub">목표 학점 달성 계산</div><div class="mc-tags"><span class="mt mt-p">예측</span><span class="mt mt-d">의사결정</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">성적 비율 대시보드</div><div class="mc-sub">배점 시각화·전략 안내</div><div class="mc-tags"><span class="mt mt-p">예측</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">D-day 알림</div><div class="mc-sub">배점 기반 우선순위 푸시</div><div class="mc-tags"><span class="mt mt-al">경보</span><span class="mt mt-pe">개인화</span></div></div>
+
+        <div class="mc mc-s"><div class="mc-title">주차별 강의 목록</div><div class="mc-sub">1~15주 주제·자료·과제</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">개인 학습 플래너 생성</div><div class="mc-sub">과목별 일정 자동 생성</div><div class="mc-tags"><span class="mt mt-au">자동화</span><span class="mt mt-pe">개인화</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">학습 플래너 (캘린더)</div><div class="mc-sub">제출일·시험일 자동 등록</div><div class="mc-tags"><span class="mt mt-au">자동화</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">진도 체크</div><div class="mc-sub">주차별 완료 체크·요약</div><div class="mc-tags"><span class="mt mt-pe">개인화</span></div></div>
+
+        <!-- ── 학사 서비스 ── -->
+        <div class="g-label" style="grid-column:1/-1"><i class="ti ti-school" style="font-size:11px"></i> 학사 AI 서비스</div>
+
+        <div class="mc mc-s"><div class="mc-title">학생 이수 현황</div><div class="mc-sub">수강·성적·졸업요건</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">학사 FAQ 챗봇</div><div class="mc-sub">24시간 자동 응대</div><div class="mc-tags"><span class="mt mt-n">NLP</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">학사·강의 챗봇 위젯</div><div class="mc-sub">FAQ + 강의 문의 통합</div><div class="mc-tags"><span class="mt mt-n">NLP</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">알림 챗봇</div><div class="mc-sub">학사 일정·공지 즉시 응대</div><div class="mc-tags"><span class="mt mt-al">경보</span></div></div>
+
+        <div class="mc mc-s"><div class="mc-title">출석·성적 데이터</div><div class="mc-sub">학기별 추이</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">학습 위험군 감지·알림</div><div class="mc-sub">조기 경보·지도교수 연계</div><div class="mc-tags"><span class="mt mt-p">예측</span><span class="mt mt-al">경보</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">학습 분석 대시보드</div><div class="mc-sub">성적 추이·위험군 시각화</div><div class="mc-tags"><span class="mt mt-p">예측</span><span class="mt mt-d">의사결정</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">성적 위험 알림</div><div class="mc-sub">성적 급락 경보 푸시</div><div class="mc-tags"><span class="mt mt-al">경보</span></div></div>
+
+        <div class="mc mc-s"><div class="mc-title">장학금·공지 데이터</div><div class="mc-sub">조건·마감·내용</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">수강신청 AI 추천</div><div class="mc-sub">이수 기반 과목 추천</div><div class="mc-tags"><span class="mt mt-r">추천</span><span class="mt mt-pe">개인화</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">수강신청 추천 위젯</div><div class="mc-sub">이수 현황 기반 과목 추천</div><div class="mc-tags"><span class="mt mt-r">추천</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">장학금 마감 알림</div><div class="mc-sub">D-7·D-1 푸시 알림</div><div class="mc-tags"><span class="mt mt-al">경보</span></div></div>
+
+        <div class="mc mc-s"><div class="mc-title">졸업 요건 DB</div><div class="mc-sub">이수학점·필수과목</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">졸업요건 자동 체크</div><div class="mc-sub">잔여 요건·이수 경로</div><div class="mc-tags"><span class="mt mt-au">자동화</span><span class="mt mt-d">의사결정</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">졸업요건 체커</div><div class="mc-sub">이수 현황·잔여 과목</div><div class="mc-tags"><span class="mt mt-au">자동화</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">졸업 요건 알림</div><div class="mc-sub">부족 과목·신청 기한</div><div class="mc-tags"><span class="mt mt-al">경보</span></div></div>
+
+        <!-- ── 진로·고도화 ── -->
+        <div class="g-label" style="grid-column:1/-1"><i class="ti ti-map" style="font-size:11px"></i> 진로·고도화</div>
+
+        <div class="mc mc-s"><div class="mc-title">학생 프로필·진로</div><div class="mc-sub">관심사·목표·취업</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">AI 진로 로드맵</div><div class="mc-sub">경로·자격증·활동 추천</div><div class="mc-tags"><span class="mt mt-r">추천</span><span class="mt mt-pe">개인화</span><span class="mt mt-d">의사결정</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">AI 진로 로드맵 뷰</div><div class="mc-sub">진로·자격증·활동 경로</div><div class="mc-tags"><span class="mt mt-r">추천</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">진로 추천 알림</div><div class="mc-sub">자격증·설명회 일정</div><div class="mc-tags"><span class="mt mt-r">추천</span><span class="mt mt-al">경보</span></div></div>
+
+        <div class="mc mc-s"><div class="mc-title">CQI 설문 데이터</div><div class="mc-sub">수업 피드백 텍스트</div></div>
+        <div class="ac">›</div>
+        <div class="mc mc-a"><div class="mc-title">CQI 피드백 AI 분석</div><div class="mc-sub">키워드 추출·개선 제안</div><div class="mc-tags"><span class="mt mt-n">NLP</span><span class="mt mt-d">의사결정</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-w"><div class="mc-title">CQI 분석 리포트</div><div class="mc-sub">피드백 요약·개선 제안</div><div class="mc-tags"><span class="mt mt-n">NLP</span></div></div>
+        <div class="ac" style="color:rgba(255,255,255,.15)">›</div>
+        <div class="mc mc-m"><div class="mc-title">피드백 요청 알림</div><div class="mc-sub">설문 참여 유도 푸시</div><div class="mc-tags"><span class="mt mt-au">자동화</span></div></div>
+
+      </div><!-- /map-grid -->
+    </div><!-- /map-wrap -->
+
+    <!-- 플로우 설명 -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px">
+      <div class="card" style="text-align:center;padding:16px 12px">
+        <div style="font-size:24px;margin-bottom:6px">📊</div>
+        <div style="font-size:12px;font-weight:600;color:#fff;margin-bottom:4px">데이터 소스</div>
+        <div style="font-size:11px;color:var(--subtext)">강의계획서·성적·이수·CQI 등 기존 Oracle DB</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px 12px">
+        <div style="font-size:24px;margin-bottom:6px">🤖</div>
+        <div style="font-size:12px;font-weight:600;color:#fff;margin-bottom:4px">AI 처리 엔진</div>
+        <div style="font-size:11px;color:var(--subtext)">LLM API 프록시 + 7가지 AI 범주 처리</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px 12px">
+        <div style="font-size:24px;margin-bottom:6px">🖥️</div>
+        <div style="font-size:12px;font-weight:600;color:#fff;margin-bottom:4px">웹 정보시스템</div>
+        <div style="font-size:11px;color:var(--subtext)">X-Platform 포털 위젯 통합 (분석·대시보드)</div>
+      </div>
+      <div class="card" style="text-align:center;padding:16px 12px">
+        <div style="font-size:24px;margin-bottom:6px">📱</div>
+        <div style="font-size:12px;font-weight:600;color:#fff;margin-bottom:4px">모바일 앱</div>
+        <div style="font-size:11px;color:var(--subtext)">스마트캠퍼스 앱 (알림·챗봇·체크)</div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer style="border-top:1px solid var(--border);padding:20px 2rem;text-align:center;color:var(--subtext);font-size:12px">
+  단국대학교 디지털정보원 정보기획팀 &nbsp;|&nbsp; 학사정보시스템 AI 서비스 도입 전략 &nbsp;|&nbsp; 2025
+</footer>
+
+</body>
+</html>
