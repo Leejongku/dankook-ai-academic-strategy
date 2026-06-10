@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>학사정보시스템 AI 접목 가능성 컨설팅 대시보드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;background:#0D1B2A;color:#E2E8F0;min-height:100vh}
+:root{--navy:#0D1B2A;--blue:#2563EB;--sky:#378ADD;--teal:#0D9488;--green:#059669;--amber:#D97706;--coral:#DC4A3D;--purple:#534AB7;--pink:#993556;--text:#E2E8F0;--sub:#94A3B8;--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.05);--card2:rgba(255,255,255,0.09)}
+
+header{background:rgba(13,27,42,0.97);border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;height:58px}
+.logo{font-size:15px;font-weight:600;color:#fff}
+.logo span{color:var(--sky);font-weight:400;font-size:12px;margin-left:8px}
+.header-badge{font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(37,99,235,0.2);color:#7EB3F8;border:1px solid rgba(37,99,235,0.3)}
+
+main{max-width:1400px;margin:0 auto;padding:1.5rem 2rem 4rem}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem}
+.kpi{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.kpi-num{font-size:28px;font-weight:700;line-height:1}
+.kpi-lbl{font-size:12px;color:var(--sub);margin-top:5px}
+.kpi-sub{font-size:11px;margin-top:4px}
+
+/* 차트 그리드 */
+.chart-grid{display:grid;grid-template-columns:1fr 320px;gap:14px;margin-bottom:1.5rem}
+.card{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.card-title{font-size:13px;font-weight:500;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* 범례 */
+.leg-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.leg{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--sub)}
+.leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* 필터 탭 */
+.filter-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.flt{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;transition:all .15s;font-family:inherit}
+.flt:hover{background:var(--card2);color:var(--text)}
+.flt.on{color:#fff;font-weight:500;border-color:transparent}
+
+/* 테이블 */
+.tbl-wrap{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+.tbl-head{padding:10px 14px;background:rgba(255,255,255,0.06);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.tbl-head-title{font-size:13px;font-weight:500;color:#fff;display:flex;align-items:center;gap:7px}
+.search-box{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--sub)}
+.search-box input{background:transparent;border:none;outline:none;color:var(--text);font-size:12px;width:160px;font-family:inherit}
+.search-box input::placeholder{color:var(--sub)}
+
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{font-size:11px;font-weight:500;color:var(--sub);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--text)}
+tbody td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(255,255,255,0.03)}
+
+/* 배지 */
+.badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.b-instant{background:rgba(220,74,61,0.2);color:#FCA5A5}
+.b-mid{background:rgba(217,119,6,0.2);color:#FCD34D}
+.b-adv{background:rgba(5,150,105,0.2);color:#6EE7B7}
+
+/* AI 범주 태그 */
+.cat-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;margin:1px;white-space:nowrap}
+
+/* 진행 바 */
+.bar-wrap{display:flex;align-items:center;gap:6px}
+.bar-bg{flex:1;background:rgba(255,255,255,0.08);border-radius:3px;height:5px}
+.bar-fill{height:5px;border-radius:3px}
+
+/* 하단 인사이트 */
+.insight-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:1.5rem}
+.insight-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.insight-num{font-size:36px;font-weight:700}
+.insight-title{font-size:13px;font-weight:500;color:#fff;margin:6px 0 4px}
+.insight-desc{font-size:12px;color:var(--sub);line-height:1.6}
+.insight-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">학사정보시스템 AI 접목 가능성 컨설팅 <span>단국대학교 디지털정보원</span></div>
+  <div class="header-badge"><i class="ti ti-robot" style="font-size:12px;vertical-align:-1px;margin-right:4px" aria-hidden="true"></i>AI 컨설팅 대시보드</div>
+</header>
+
+<main>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-num" style="color:#378ADD">74</div>
+      <div class="kpi-lbl">전체 메뉴 수</div>
+      <div class="kpi-sub" style="color:var(--sub)">학사·일반행정·국제·포트폴리오</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num" style="color:#DC4A3D">28</div>
+      <div class="kpi-lbl">AI 즉시 접목 가능 메뉴</div>
+      <div class="kpi-sub" style="color:#FCA5A5">전체의 38%</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num" style="color:#FCD34D">3,071,698</div>
+      <div class="kpi-lbl">총 접속 건수</div>
+      <div class="kpi-sub" style="color:var(--sub)">분석 기간 누적</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-num" style="color:#6EE7B7">70%</div>
+      <div class="kpi-lbl">AI 적용 메뉴 접속 커버율</div>
+      <div class="kpi-sub" style="color:#5EEAD4">28개로 전체 접속의 70% 커버</div>
+    </div>
+  </div>
+
+  <!-- 차트 -->
+  <div class="chart-grid">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-chart-bar" aria-hidden="true"></i>상위 15개 메뉴 접속량 — AI 우선순위</div>
+      <div class="leg-row">
+        <span class="leg"><span class="leg-sq" style="background:#DC4A3D"></span>즉시 도입 (1순위)</span>
+        <span class="leg"><span class="leg-sq" style="background:#D97706"></span>중기 도입 (2순위)</span>
+        <span class="leg"><span class="leg-sq" style="background:#059669"></span>고도화 (3순위)</span>
+      </div>
+      <div style="position:relative;height:340px">
+        <canvas id="barChart" role="img" aria-label="상위 15개 메뉴 접속량 막대 차트">수강계획도우미 824,782건 등 상위 15개 메뉴 접속 현황</canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-chart-donut" aria-hidden="true"></i>AI 범주별 적용 메뉴 수</div>
+      <div style="position:relative;height:200px;margin-bottom:14px">
+        <canvas id="doughnut" role="img" aria-label="AI 범주별 적용 가능 메뉴 수 도넛 차트">NLP 12건, 추천 8건, 예측 9건 등</canvas>
+      </div>
+      <div id="doughnutLegend" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+
+  <!-- 핵심 인사이트 -->
+  <div class="insight-grid">
+    <div class="insight-card">
+      <div class="insight-num" style="color:#378ADD">824,782</div>
+      <div class="insight-title">수강계획도우미 — 압도적 1위</div>
+      <div class="insight-desc">전체 메뉴 중 단독 1위. 현재 수동 조합 방식을 이수 현황 DB 기반 AI 추천으로 전환하면 즉각적 체감 효과 발생.</div>
+      <span class="insight-tag" style="background:rgba(13,148,136,0.2);color:#5EEAD4">추천 · 개인화</span>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num" style="color:#FCD34D">650,000+</div>
+      <div class="insight-title">성적 관련 4개 메뉴 합산</div>
+      <div class="insight-desc">최종·누적·중간·과제 성적 메뉴를 묶으면 2위 그룹. 배점 비율과 현재 점수 연결 시 A학점 필요 점수 즉시 계산 가능.</div>
+      <span class="insight-tag" style="background:rgba(83,74,183,0.2);color:#A89FF8">예측 · 경보 · 의사결정</span>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num" style="color:#FCA5A5">360,573</div>
+      <div class="insight-title">자가진단시뮬레이션 — AI 전환 최용이</div>
+      <div class="insight-desc">졸업요건 로직이 이미 DB에 구현. 추가 데이터 구축 없이 AI 예측 + 잔여 과목 추천으로 즉시 업그레이드 가능.</div>
+      <span class="insight-tag" style="background:rgba(220,74,61,0.2);color:#FCA5A5">예측 · 의사결정</span>
+    </div>
+  </div>
+
+  <!-- 상세 테이블 -->
+  <div class="tbl-wrap">
+    <div class="tbl-head">
+      <div class="tbl-head-title"><i class="ti ti-table" aria-hidden="true"></i>AI 접목 가능 메뉴 전체 목록</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="search-box">
+          <i class="ti ti-search" style="font-size:13px" aria-hidden="true"></i>
+          <input type="text" id="searchInput" placeholder="메뉴명 검색...">
+        </div>
+      </div>
+    </div>
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border)">
+      <div class="filter-row" id="filterRow">
+        <button class="flt on" style="background:#334155;border-color:#334155;color:#fff" onclick="filterPri('all',this)">전체 (28)</button>
+        <button class="flt" onclick="filterPri('1',this)"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#DC4A3D;margin-right:4px"></span>즉시 도입 (11)</button>
+        <button class="flt" onclick="filterPri('2',this)"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#D97706;margin-right:4px"></span>중기 도입 (10)</button>
+        <button class="flt" onclick="filterPri('3',this)"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#059669;margin-right:4px"></span>고도화 (7)</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:140px" onclick="sortTable('menu')">메뉴명 <i class="ti ti-arrows-sort" style="font-size:11px" aria-hidden="true"></i></th>
+            <th style="width:56px;text-align:right" onclick="sortTable('cnt')">접속수 <i class="ti ti-arrows-sort" style="font-size:11px" aria-hidden="true"></i></th>
+            <th style="width:80px">접속 비율</th>
+            <th style="width:140px">AI 서비스명</th>
+            <th style="width:160px">AI 범주</th>
+            <th style="width:70px;text-align:center">우선순위</th>
+            <th>기대 효과</th>
+          </tr>
+        </thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer style="border-top:1px solid var(--border);padding:16px 2rem;text-align:center;color:var(--sub);font-size:12px">
+  단국대학교 디지털정보원 정보기획팀 &nbsp;|&nbsp; 학사정보시스템 AI 접목 가능성 컨설팅 대시보드 &nbsp;|&nbsp; 2025
+</footer>
+
+<script>
+const DATA = [
+  {menu:'수강계획도우미',cnt:824782,ai:'수강신청 AI 추천 엔진',cats:['추천','개인화'],pri:'1',eff:'이수 현황 기반 최적 과목 자동 추천, 시간표 충돌 자동 감지'},
+  {menu:'자가진단시뮬레이션',cnt:360573,ai:'졸업 예측 시뮬레이션',cats:['예측','의사결정'],pri:'1',eff:'잔여 요건 자동 계산, 졸업 가능 시점 AI 예측, 최단 경로 추천'},
+  {menu:'수강신청',cnt:349830,ai:'수강신청 AI 도우미 챗봇',cats:['NLP·챗봇','추천'],pri:'1',eff:'자연어로 신청 방법 안내, 오류 사전 감지, 24시간 자동 응대'},
+  {menu:'최종성적 조회',cnt:212799,ai:'성적 AI 분석·경보',cats:['예측','경보','의사결정'],pri:'1',eff:'GPA 추이 분석, 학점 급락 즉시 경보, 목표 학점 시뮬레이션'},
+  {menu:'누적성적 조회',cnt:152269,ai:'학점 예측 시뮬레이션',cats:['예측','의사결정'],pri:'1',eff:'A학점 달성을 위한 기말 필요 점수 자동 계산, 학기별 추이 시각화'},
+  {menu:'등록금고지서출력',cnt:148856,ai:'등록금 AI 계산기',cats:['자동화','NLP·챗봇'],pri:'1',eff:'장학 차감 후 실납부액 자동 계산, 납부 기한 단계별 알림'},
+  {menu:'출석확인 조회',cnt:80732,ai:'출석 위험 AI 경보',cats:['경보','예측'],pri:'1',eff:'결석 한도 80% 도달 시 학생·교수 동시 즉시 경보'},
+  {menu:'학적변동신청',cnt:75151,ai:'학적 변동 AI 안내',cats:['NLP·챗봇','자동화'],pri:'1',eff:'휴·복학 절차 24시간 자동 안내, 4단계 진행 현황 실시간 추적'},
+  {menu:'중간고사성적 조회',cnt:73119,ai:'성적 비율 전략 계산기',cats:['예측','의사결정'],pri:'1',eff:'강의계획서 배점 파싱 → 기말 필요 점수 즉시 자동 계산'},
+  {menu:'장학금수혜내역조회',cnt:70085,ai:'장학금 AI 추천·경보',cats:['추천','개인화','경보'],pri:'1',eff:'성적·소득·전공 조건 자동 매칭, 마감 D-7·D-1 알림'},
+  {menu:'성적장학신청',cnt:51048,ai:'장학 자격 AI 사전 체크',cats:['자동화','경보'],pri:'1',eff:'신청 전 자격 요건 자동 검증, 미달 시 경고 및 보완 안내'},
+  {menu:'수강철회 신청',cnt:47145,ai:'철회 영향 AI 시뮬레이션',cats:['의사결정','예측'],pri:'2',eff:'철회 시 학점·장학·졸업요건 영향 자동 시뮬레이션, 대안 과목 추천'},
+  {menu:'전공신청',cnt:42986,ai:'전공 AI 추천·적합도 분석',cats:['추천','개인화'],pri:'2',eff:'성적·관심사 기반 전공 적합도 분석 및 추천, 유사 전공 비교'},
+  {menu:'유고결석신청',cnt:42920,ai:'결석 한도 AI 관리',cats:['자동화','경보'],pri:'2',eff:'한도 잔여 횟수 자동 계산, 위험 시 자동 경보 및 교수 연계'},
+  {menu:'성적정정 신청',cnt:29467,ai:'이의신청 AI 가이드',cats:['NLP·챗봇','자동화'],pri:'2',eff:'절차·기간·사유 작성 AI 안내, 처리 현황 실시간 추적'},
+  {menu:'강의평가 입력',cnt:29304,ai:'CQI 피드백 AI 분석',cats:['NLP·챗봇','의사결정'],pri:'2',eff:'설문 텍스트 감성 분류, 키워드 추출, 교수 개선 리포트 자동 생성'},
+  {menu:'분납신청',cnt:29245,ai:'분납 전략 AI 추천',cats:['자동화','의사결정'],pri:'2',eff:'장학 차감액 자동 계산, 최적 분납 방식 추천, 납부 일정 알림'},
+  {menu:'전부(과)신청',cnt:28576,ai:'전부 AI 영향 시뮬레이션',cats:['예측','의사결정'],pri:'2',eff:'전과 후 졸업요건·이수학점 영향 사전 시뮬레이션, 추가 필요 과목 안내'},
+  {menu:'교과목포기신청',cnt:24417,ai:'포기 영향 AI 분석',cats:['의사결정','예측'],pri:'2',eff:'포기 시 장학·졸업·성적 영향 자동 시뮬레이션, 대안 제시'},
+  {menu:'영어교과면제신청',cnt:18494,ai:'면제 자격 AI 체크',cats:['자동화','NLP·챗봇'],pri:'2',eff:'공인어학 성적 자동 검증, 자격 충족 여부 즉시 안내'},
+  {menu:'논문심사신청',cnt:12161,ai:'논문 일정 AI 관리',cats:['자동화','경보'],pri:'2',eff:'심사 일정 자동 등록, 제출 D-day 단계별 알림, 서류 체크리스트'},
+  {menu:'외국어시험신청',cnt:15339,ai:'시험 일정 AI 알림',cats:['자동화','경보'],pri:'2',eff:'자격 요건 자동 체크, 시험 기간 맞춤 알림, 접수 마감 경보'},
+  {menu:'상담신청',cnt:11794,ai:'AI 사전 상담 매칭',cats:['NLP·챗봇','개인화'],pri:'3',eff:'학생 상황 파악 후 적합한 상담사·주제 자동 매칭, 대기 시간 예측'},
+  {menu:'설문참여',cnt:11497,ai:'설문 AI 분석 리포트',cats:['NLP·챗봇','의사결정'],pri:'3',eff:'응답 자동 분류·요약, 기관 의사결정용 인사이트 리포트 생성'},
+  {menu:'교환학생신청',cnt:8606,ai:'교환학생 AI 매칭',cats:['추천','개인화'],pri:'3',eff:'성적·어학·관심지역 기반 파견교 자동 추천, 합격 가능성 예측'},
+  {menu:'학생참여프로그램신청',cnt:5764,ai:'비교과 프로그램 AI 추천',cats:['추천','개인화'],pri:'3',eff:'학생 프로필 기반 맞춤 비교과 프로그램 추천, 진로 연계 분석'},
+  {menu:'교직이수시뮬레이션',cnt:7273,ai:'교직 요건 AI 시뮬레이션',cats:['예측','의사결정'],pri:'3',eff:'교직 이수 가능 여부 및 졸업 시점 자동 예측, 필요 과목 안내'},
+  {menu:'학점인정신청',cnt:5128,ai:'학점 인정 AI 가이드',cats:['NLP·챗봇','자동화'],pri:'3',eff:'해외 취득 학점 인정 요건 자동 안내, 서류 체크리스트 자동 생성'},
+];
+
+const catColors = {
+  '추천':['rgba(13,148,136,0.2)','#5EEAD4'],
+  '예측':['rgba(83,74,183,0.2)','#A89FF8'],
+  'NLP·챗봇':['rgba(37,99,235,0.2)','#7EB3F8'],
+  '자동화':['rgba(217,119,6,0.2)','#FCD34D'],
+  '경보':['rgba(220,74,61,0.2)','#FCA5A5'],
+  '개인화':['rgba(153,53,86,0.2)','#F9A8D4'],
+  '의사결정':['rgba(5,150,105,0.2)','#6EE7B7']
+};
+
+let currentPri = 'all';
+let searchTerm = '';
+let sortKey = 'cnt';
+let sortDir = -1;
+const MAX_CNT = 824782;
+
+function renderTable() {
+  let rows = DATA.filter(d => {
+    const matchPri = currentPri === 'all' || d.pri === currentPri;
+    const matchSearch = d.menu.includes(searchTerm) || d.ai.includes(searchTerm) || d.eff.includes(searchTerm);
+    return matchPri && matchSearch;
+  });
+  rows.sort((a,b) => {
+    const av = a[sortKey], bv = b[sortKey];
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+    return sortDir * (av - bv);
+  });
+  const tbody = document.getElementById('tblBody');
+  tbody.innerHTML = rows.map(d => {
+    const pct = Math.round(d.cnt / MAX_CNT * 100);
+    const barColor = d.pri === '1' ? '#DC4A3D' : d.pri === '2' ? '#D97706' : '#059669';
+    const priLabel = d.pri === '1' ? '즉시 도입' : d.pri === '2' ? '중기 도입' : '고도화';
+    const priClass = d.pri === '1' ? 'b-instant' : d.pri === '2' ? 'b-mid' : 'b-adv';
+    const cats = d.cats.map(c => `<span class="cat-tag" style="background:${catColors[c][0]};color:${catColors[c][1]}">${c}</span>`).join('');
+    return `<tr>
+      <td style="font-weight:500;font-size:12px">${d.menu}</td>
+      <td style="text-align:right;font-size:12px;font-variant-numeric:tabular-nums">${d.cnt.toLocaleString()}</td>
+      <td>
+        <div class="bar-wrap">
+          <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+          <span style="font-size:10px;color:var(--sub);width:28px;text-align:right">${pct}%</span>
+        </div>
+      </td>
+      <td style="font-size:11px;color:var(--sub)">${d.ai}</td>
+      <td>${cats}</td>
+      <td style="text-align:center"><span class="badge ${priClass}">${priLabel}</span></td>
+      <td style="font-size:11px;color:var(--sub)">${d.eff}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterPri(pri, btn) {
+  currentPri = pri;
+  document.querySelectorAll('.flt').forEach(b => {
+    b.classList.remove('on');
+    b.style.background = '';
+    b.style.borderColor = '';
+    b.style.color = '';
+  });
+  btn.classList.add('on');
+  btn.style.background = '#334155';
+  btn.style.borderColor = '#334155';
+  btn.style.color = '#fff';
+  renderTable();
+}
+
+function sortTable(key) {
+  if (sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = key === 'cnt' ? -1 : 1; }
+  renderTable();
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchTerm = e.target.value.trim();
+  renderTable();
+});
+
+renderTable();
+
+// 막대 차트
+const top15 = [...DATA].sort((a,b)=>b.cnt-a.cnt).slice(0,15);
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: top15.map(d => d.menu),
+    datasets: [{
+      label: '접속 건수',
+      data: top15.map(d => d.cnt),
+      backgroundColor: top15.map(d => d.pri==='1'?'#DC4A3D':d.pri==='2'?'#D97706':'#059669'),
+      borderRadius: 3, borderSkipped: false
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => ' ' + c.raw.toLocaleString() + '건' } }
+    },
+    scales: {
+      x: { ticks: { callback: v => v >= 1000 ? Math.round(v/1000) + 'K' : v, font: { size:10 }, color: '#94A3B8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+      y: { ticks: { font: { size: 10 }, color: '#E2E8F0' }, grid: { display: false } }
+    }
+  }
+});
+
+// 도넛 차트
+const catCount = { 'NLP·챗봇':0, '추천':0, '예측':0, '자동화':0, '경보':0, '개인화':0, '의사결정':0 };
+DATA.forEach(d => d.cats.forEach(c => { if (catCount[c] !== undefined) catCount[c]++; }));
+const dColors = ['#185FA5','#0D9488','#534AB7','#D97706','#DC4A3D','#993556','#059669'];
+new Chart(document.getElementById('doughnut'), {
+  type: 'doughnut',
+  data: {
+    labels: Object.keys(catCount),
+    datasets: [{ data: Object.values(catCount), backgroundColor: dColors, borderWidth: 0, hoverOffset: 6 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '62%',
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}개 메뉴` } } }
+  }
+});
+const legEl = document.getElementById('doughnutLegend');
+Object.keys(catCount).forEach((k, i) => {
+  legEl.innerHTML += `<div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+    <div style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:${dColors[i]};flex-shrink:0;display:inline-block"></span><span style="color:#94A3B8">${k}</span></div>
+    <span style="font-weight:500;color:#E2E8F0">${catCount[k]}개</span>
+  </div>`;
+});
+</script>
+</body>
+</html>
